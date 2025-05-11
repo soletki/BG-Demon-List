@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+#levels-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.level-container {
+	display: flex;
+	align-items: center;
+	background-color: #1e1f29;
+	border: 1px solid #2c2f3a;
+	padding: 12px;
+	margin: 16px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	width: 700px;
+	height: 150px;
+}
+
+.level-img {
+	width: 200px;
+	aspect-ratio: 16/9;
+	object-fit: cover;
+	border-radius: 3px;
+	margin-right: 16px;
+}
+
+.level-text-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.level-name {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 1.3em;
+	font-weight: 500;
+	color: #ffffff;
+	margin: 0 0 4px 0;
+}
+
+.level-creator {
+	font-family: 'Montserrat', sans-serif;
+	font-style: italic;
+	font-size: 0.9em;
+	color: #b0b0b0;
+	margin: 0 0 4px 0;
+}
