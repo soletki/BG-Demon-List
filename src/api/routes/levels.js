@@ -34,7 +34,7 @@ router.get('/:position', async (req, res) => {
 });
 
 // POST new level (admin only)
-router.post('/', async (req, res) => {
+router.post('/', verifyAdmin, async (req, res) => {
 	const { name, position, creators, verifier, video } = req.body;
 	if (!name || position == null || !creators || !verifier || !video)
 		return res.status(400).json({ message: 'Missing required fields' });
@@ -50,42 +50,42 @@ router.post('/', async (req, res) => {
 			await updateDoc(ref, { position: level.position + 1 });
 		}
 
-		await setDoc(doc(db, 'levels', name), { name, position, creators, verifier, video });
+		await addDoc(collection(db, 'levels'), { name, position, creators, verifier, video });
 		res.status(201).json({ message: 'Level added successfully!' });
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Failed to add level' });
 	}
 });
+
 // DELETE level by name (admin only)
-router.delete('/:name', async (req, res) => {
+router.delete('/:name', verifyAdmin, async (req, res) => {
 	const levelName = req.params.name;
 
 	try {
-		const levelRef = doc(db, 'levels', levelName);
-		const levelSnap = await getDoc(levelRef);
+		// Find the level by name
+		const q = query(collection(db, 'levels'), where('name', '==', levelName));
+		const snapshot = await getDocs(q);
 
-		if (!levelSnap.exists()) {
+		if (snapshot.empty) {
 			return res.status(404).json({ message: 'Level not found' });
 		}
 
-		const deletedPosition = levelSnap.data().position;
+		const levelDoc = snapshot.docs[0];
+		const levelRef = doc(db, 'levels', levelDoc.id);
+		const deletedPosition = levelDoc.data().position;
 
 		// Delete the level
 		await deleteDoc(levelRef);
 
 		// Fetch and update all levels below the deleted one
-		const q = query(collection(db, 'levels'), where('position', '>', deletedPosition));
-		const snapshot = await getDocs(q);
+		const updateQuery = query(collection(db, 'levels'), where('position', '>', deletedPosition));
+		const updateSnapshot = await getDocs(updateQuery);
 
-		const levelsToUpdate = snapshot.docs.map(docSnap => ({
-			id: docSnap.id,
-			...docSnap.data()
-		}));
-
-		for (const level of levelsToUpdate) {
-			const ref = doc(db, 'levels', level.name);
-			await updateDoc(ref, { position: level.position - 1 });
+		for (const docSnap of updateSnapshot.docs) {
+			await updateDoc(doc(db, 'levels', docSnap.id), {
+				position: docSnap.data().position - 1,
+			});
 		}
 
 		return res.json({ message: 'Level deleted and positions updated' });
@@ -95,7 +95,7 @@ router.delete('/:name', async (req, res) => {
 	}
 });
 
-router.patch('/:name/move/:newPosition', async (req, res) => {
+router.patch('/:name/move/:newPosition', verifyAdmin, async (req, res) => {
 	const levelName = req.params.name;
 	const newPosition = parseInt(req.params.newPosition, 10);
 
@@ -104,15 +104,17 @@ router.patch('/:name/move/:newPosition', async (req, res) => {
 	}
 
 	try {
-		// Get the level
-		const levelRef = doc(db, 'levels', levelName);
-		const levelSnap = await getDoc(levelRef);
+		// Find the level by name
+		const q = query(collection(db, 'levels'), where('name', '==', levelName));
+		const snapshot = await getDocs(q);
 
-		if (!levelSnap.exists()) {
+		if (snapshot.empty) {
 			return res.status(404).json({ message: 'Level not found' });
 		}
 
-		const oldPosition = levelSnap.data().position;
+		const levelDoc = snapshot.docs[0];
+		const levelRef = doc(db, 'levels', levelDoc.id);
+		const oldPosition = levelDoc.data().position;
 
 		if (oldPosition === newPosition) {
 			return res.status(200).json({ message: 'Level already at desired position' });
@@ -120,38 +122,42 @@ router.patch('/:name/move/:newPosition', async (req, res) => {
 
 		const levelsRef = collection(db, 'levels');
 
-		// Moving up (to a lower number)
+		// Moving up
 		if (newPosition < oldPosition) {
-			const q = query(
+			const upQuery = query(
 				levelsRef,
 				where('position', '>=', newPosition),
 				where('position', '<', oldPosition)
 			);
-			const snapshot = await getDocs(q);
-			for (const docSnap of snapshot.docs) {
-				const ref = doc(db, 'levels', docSnap.data().name);
-				await updateDoc(ref, { position: docSnap.data().position + 1 });
+			const upSnapshot = await getDocs(upQuery);
+			for (const docSnap of upSnapshot.docs) {
+				await updateDoc(doc(db, 'levels', docSnap.id), {
+					position: docSnap.data().position + 1,
+				});
 			}
 		}
 
-		// Moving down (to a higher number)
+		// Moving down
 		else {
-			const q = query(
+			const downQuery = query(
 				levelsRef,
 				where('position', '>', oldPosition),
 				where('position', '<=', newPosition)
 			);
-			const snapshot = await getDocs(q);
-			for (const docSnap of snapshot.docs) {
-				const ref = doc(db, 'levels', docSnap.data().name);
-				await updateDoc(ref, { position: docSnap.data().position - 1 });
+			const downSnapshot = await getDocs(downQuery);
+			for (const docSnap of downSnapshot.docs) {
+				await updateDoc(doc(db, 'levels', docSnap.id), {
+					position: docSnap.data().position - 1,
+				});
 			}
 		}
 
-		// Update the moved level
+		// Finally, update the moved level
 		await updateDoc(levelRef, { position: newPosition });
 
-		return res.json({ message: `Level moved from ${oldPosition} to ${newPosition}` });
+		return res.json({
+			message: `Level "${levelName}" moved from ${oldPosition} to ${newPosition}`,
+		});
 	} catch (error) {
 		console.error('Error moving level:', error);
 		return res.status(500).json({ message: 'Failed to move level' });
