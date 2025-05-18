@@ -24,6 +24,11 @@
 	object-fit: cover;
 	border-radius: 3px;
 	margin-right: 16px;
+	transition: transform 0.3s ease;
+}
+
+.level-img:hover{
+	transform: translateY(-5px);
 }
 
 .level-text-container {
@@ -33,15 +38,14 @@
 }
 
 .level-name {
-	font-family: 'Montserrat', sans-serif;
 	font-size: 1.3em;
 	font-weight: 500;
 	color: #ffffff;
 	margin: 0 0 4px 0;
+	cursor: pointer;
 }
 
 .level-creator {
-	font-family: 'Montserrat', sans-serif;
 	font-style: italic;
 	font-size: 0.9em;
 	color: #b0b0b0;
