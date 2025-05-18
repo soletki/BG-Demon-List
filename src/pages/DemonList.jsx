@@ -6,8 +6,9 @@ import Navbar from '../components/Navbar';
 
 export default function DemonList() {
 	const [levels, setLevels] = useState([]);
+	const [searchTerm, setSearchTerm] = useState('');
 	const [loading, setLoading] = useState(true);
-
+	
 	useEffect(() => {
 		const fetchLevels = async () => {
 			try {
@@ -29,14 +30,28 @@ export default function DemonList() {
 
 		fetchLevels();
 	}, []);
+	const filteredLevels = levels.filter((level) =>
+		level.name.toLowerCase().includes(searchTerm.toLowerCase())
+	)
+	.sort((a, b)=> a.position - b.position);
 
 	if (loading) return <p className="text-center mt-10">Loading...</p>;
 
 	return (
 		<div>
             <Navbar></Navbar>
+			
 			<div id="levels-container">
-				{levels.map((level) => {
+				<div id='search-bar'>
+					<input
+						type="text"
+						placeholder="Search..."
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+					/>
+				</div>
+				
+				{filteredLevels.map((level) => {
 					const videoId = extractYouTubeId(level.video);
 					return (
 						<div className="level-container" key={level.name}>
@@ -57,6 +72,7 @@ export default function DemonList() {
 								</p>
 							</div>
 						</div>
+						
 					);
 				})}
 			</div>

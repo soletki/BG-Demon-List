@@ -9,7 +9,7 @@ export default function Navbar() {
       </h3>
       <nav>
         <ul id="nav_links">
-          <li><a href="leaderboard.html">Leaderboard</a></li>
+          <li><a href="/leaderboard">Leaderboard</a></li>
         </ul>
       </nav>
     </header>
