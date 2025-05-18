@@ -1,6 +1,6 @@
 import express from 'express';
 import { db } from '../firebase.js';
-import { collection, doc, getDocs, query, orderBy, setDoc, where, limit, updateDoc, getDoc, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, query, orderBy, addDoc, where, limit, updateDoc, getDoc, deleteDoc } from 'firebase/firestore';
 import verifyAdmin from '../middleware/verifyAdmin.js';
 
 const router = express.Router();
@@ -46,7 +46,7 @@ router.post('/', verifyAdmin, async (req, res) => {
 			.sort((a, b) => b.position - a.position);
 
 		for (const level of updates) {
-			const ref = doc(db, 'levels', level.name);
+			const ref = doc(db, 'levels', level.id);
 			await updateDoc(ref, { position: level.position + 1 });
 		}
 
