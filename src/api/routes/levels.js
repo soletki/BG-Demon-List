@@ -1,6 +1,6 @@
 import express from 'express';
 import { db } from '../firebase.js';
-import { collection, doc, getDocs, query, orderBy, addDoc, where, limit, updateDoc, getDoc, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, query, orderBy, setDoc, where, limit, updateDoc, getDoc, deleteDoc, addDoc } from 'firebase/firestore';
 import verifyAdmin from '../middleware/verifyAdmin.js';
 
 const router = express.Router();
