@@ -46,7 +46,7 @@ router.post('/', verifyAdmin, async (req, res) => {
 			.sort((a, b) => b.position - a.position);
 
 		for (const level of updates) {
-			const ref = doc(db, 'levels', level.name);
+			const ref = doc(db, 'levels', level.id);
 			await updateDoc(ref, { position: level.position + 1 });
 		}
 
