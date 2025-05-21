@@ -67,8 +67,8 @@ router.get('/:position', async (req, res) => {
 
 // POST new level (admin only)
 router.post('/', verifyAdmin, async (req, res) => {
-	const { name, position, creators, verifier, video } = req.body;
-	if (!name || position == null || !creators || !verifier || !video)
+	const { name, position, creators, verifier, video, requirement } = req.body;
+	if (!name || position == null || !creators || !verifier || !video || !requirement)
 		return res.status(400).json({ message: 'Missing required fields' });
 
 	try {
@@ -82,7 +82,7 @@ router.post('/', verifyAdmin, async (req, res) => {
 			await updateDoc(ref, { position: level.position + 1 });
 		}
 
-		await addDoc(collection(db, 'levels'), { name, position, creators, verifier, video });
+		await addDoc(collection(db, 'levels'), { name, position, creators, verifier, video, requirement });
 		res.status(201).json({ message: 'Level added successfully!' });
 	} catch (error) {
 		console.error(error);
