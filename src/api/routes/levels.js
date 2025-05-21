@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
 		if (q.empty) return res.sendStatus(400);
 		res.status(200).send(q.docs.map(doc => doc.data()));
 	} catch (error) {
-		res.status(500).json({ message: 'Server error' });
+		res.status(500).json({ message: error.message });
 	}
 });
 
@@ -27,11 +27,29 @@ router.get('/:position', async (req, res) => {
 		if (snapshot.empty) return res.status(404).json({ message: 'Not found' });
 
 		const docSnap = snapshot.docs[0];
-		res.json({ id: docSnap.id, ...docSnap.data() });
+		const levelId = docSnap.id;
+		const levelData = docSnap.data();
+
+		// Fetch records related to this level
+		const recordsSnap = await getDocs(
+			query(collection(db, 'records'), where('levelId', '==', levelId))
+		);
+
+		const records = recordsSnap.docs.map(doc => ({
+			id: doc.id,
+			...doc.data(),
+		}));
+
+		res.json({
+			id: levelId,
+			...levelData,
+			records,
+		});
 	} catch (error) {
-		res.status(500).json({ message: 'Server error' });
+		res.status(500).json({ message: error.message });
 	}
 });
+
 
 // POST new level (admin only)
 router.post('/', verifyAdmin, async (req, res) => {
