@@ -30,15 +30,28 @@ router.get('/:position', async (req, res) => {
 		const levelId = docSnap.id;
 		const levelData = docSnap.data();
 
-		// Fetch records related to this level
+		// Fetch records for this level
 		const recordsSnap = await getDocs(
 			query(collection(db, 'records'), where('levelId', '==', levelId))
 		);
 
-		const records = recordsSnap.docs.map(doc => ({
-			id: doc.id,
-			...doc.data(),
-		}));
+		const records = await Promise.all(
+			recordsSnap.docs.map(async (recordDoc) => {
+				const recordData = recordDoc.data();
+
+				// Properly get player name using correct doc() function
+				const playerRef = doc(db, 'players', recordData.playerId);
+				const playerSnap = await getDoc(playerRef);
+
+				const playerName = playerSnap.exists() ? playerSnap.data().name : 'Unknown';
+
+				return {
+					id: recordDoc.id,
+					...recordData,
+					player: playerName,
+				};
+			})
+		);
 
 		res.json({
 			id: levelId,
@@ -49,6 +62,7 @@ router.get('/:position', async (req, res) => {
 		res.status(500).json({ message: error.message });
 	}
 });
+
 
 
 // POST new level (admin only)
