@@ -5,7 +5,7 @@ export default function Navbar() {
   return (
     <header>
       <h3 id="logo">
-        <a href="./">BDL</a>
+        <a href="/">BDL</a>
       </h3>
       <nav>
         <ul id="nav_links">

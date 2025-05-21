@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
 		if (q.empty) return res.sendStatus(400);
 		res.status(200).send(q.docs.map(doc => doc.data()));
 	} catch (error) {
-		res.status(500).json({ message: 'Server error' });
+		res.status(500).json({ message: error.message });
 	}
 });
 
@@ -27,11 +27,43 @@ router.get('/:position', async (req, res) => {
 		if (snapshot.empty) return res.status(404).json({ message: 'Not found' });
 
 		const docSnap = snapshot.docs[0];
-		res.json({ id: docSnap.id, ...docSnap.data() });
+		const levelId = docSnap.id;
+		const levelData = docSnap.data();
+
+		// Fetch records for this level
+		const recordsSnap = await getDocs(
+			query(collection(db, 'records'), where('levelId', '==', levelId))
+		);
+
+		const records = await Promise.all(
+			recordsSnap.docs.map(async (recordDoc) => {
+				const recordData = recordDoc.data();
+
+				// Properly get player name using correct doc() function
+				const playerRef = doc(db, 'players', recordData.playerId);
+				const playerSnap = await getDoc(playerRef);
+
+				const playerName = playerSnap.exists() ? playerSnap.data().name : 'Unknown';
+
+				return {
+					id: recordDoc.id,
+					...recordData,
+					player: playerName,
+				};
+			})
+		);
+
+		res.json({
+			id: levelId,
+			...levelData,
+			records,
+		});
 	} catch (error) {
-		res.status(500).json({ message: 'Server error' });
+		res.status(500).json({ message: error.message });
 	}
 });
+
+
 
 // POST new level (admin only)
 router.post('/', verifyAdmin, async (req, res) => {
@@ -46,7 +78,7 @@ router.post('/', verifyAdmin, async (req, res) => {
 			.sort((a, b) => b.position - a.position);
 
 		for (const level of updates) {
-			const ref = doc(db, 'levels', level.name);
+			const ref = doc(db, 'levels', level.id);
 			await updateDoc(ref, { position: level.position + 1 });
 		}
 

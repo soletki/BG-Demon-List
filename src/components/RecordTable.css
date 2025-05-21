@@ -1,0 +1,47 @@
+.record-table-container {
+	background-color: #21232b;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	max-width: 800px;
+	width: 95%;
+}
+
+.record-table-title {
+	color: white;
+	text-align: center;
+	margin-bottom: 15px;
+	font-size: 1.5rem;
+}
+
+.record-table {
+	width: 100%;
+	border-collapse: collapse;
+	color: white;
+	font-size: 1rem;
+}
+
+.record-table th,
+.record-table td {
+	padding: 12px 15px;
+	text-align: left;
+	border-bottom: 1px solid #333;
+}
+
+.record-table th {
+	background-color: #2b2b3a;
+	font-weight: 600;
+}
+
+.record-table tr:hover {
+	background-color: #2f2f42;
+}
+
+.record-table a {
+	color: #66ccff;
+	text-decoration: none;
+}
+
+.record-table a:hover {
+	text-decoration: underline;
+}
