@@ -54,7 +54,7 @@ export default function DemonList() {
 				{filteredLevels.map((level) => {
 					const videoId = extractYouTubeId(level.video);
 					return (
-						<div className="level-container" key={level.name}>
+						<div className="level-container" key={level.position}>
                             <a href={`${level.video}`}>
                                 <img
                                     className="level-img"
@@ -64,9 +64,9 @@ export default function DemonList() {
                             </a>
 							
 							<div className="level-text-container">
-								<h4 className="level-name">
+								<a href={`/level/${level.position}`}><h4 className="level-name">
 									#{level.position} - {level.name}
-								</h4>
+								</h4></a>
 								<p className="level-creator">
 									{level.creators[0]}
 								</p>

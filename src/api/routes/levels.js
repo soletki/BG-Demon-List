@@ -58,7 +58,6 @@ router.get('/:position', async (req, res) => {
 				};
 			})
 		);
-
 		res.json({
 			id: levelId,
 			...levelData,
