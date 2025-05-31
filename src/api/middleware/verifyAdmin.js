@@ -1,21 +1,34 @@
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase.js';
+import { admin } from '../firebase.js';
 
 export default async function verifyAdmin(req, res, next) {
-	const userId = req.body.userId;
-	if (!userId) return res.status(400).json({ message: 'User ID is required' });
+	const authHeader = req.headers.authorization;
+
+	if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		return res.status(401).json({ message: 'Missing or invalid Authorization header' });
+	}
+
+	const idToken = authHeader.split(' ')[1];
 
 	try {
-		const userRef = doc(db, 'users', userId);
-		const userSnap = await getDoc(userRef);
+		const decodedToken = await admin.auth().verifyIdToken(idToken);
+		const uid = decodedToken.uid;
 
-		if (userSnap.exists() && userSnap.data().isAdmin) {
+		const userDoc = await admin.firestore().doc(`users/${uid}`).get();
+
+		if (!userDoc.exists) {
+			return res.status(404).json({ message: 'User document not found' });
+		}
+
+		const userData = userDoc.data();
+
+		if (userData.isAdmin === true) {
+			req.user = { uid, ...userData };
 			next();
 		} else {
-			res.status(403).json({ message: 'Not authorized' });
+			return res.status(403).json({ message: 'Not authorized: Admins only' });
 		}
 	} catch (error) {
-		console.error('Error verifying admin:', error);
-		res.status(500).json({ message: 'Admin check failed' });
+		console.error('Admin check failed:', error);
+		return res.status(401).json({ message: 'Invalid or expired token' });
 	}
 }
