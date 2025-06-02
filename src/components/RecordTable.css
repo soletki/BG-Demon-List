@@ -1,47 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 .record-table-container {
-	background-color: #21232b;
+	background: linear-gradient(135deg, #21232b 0%, #2a2d36 100%);
 	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-	max-width: 800px;
+	border-radius: 25px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+		0 1px 0 rgba(255, 255, 255, 0.1) inset;
+	max-width: 900px;
 	width: 95%;
+	margin: 30px auto;
+	position: relative;
+	overflow: hidden;
+	backdrop-filter: blur(10px);
+	font-family: 'Montserrat', sans-serif;
+}
+
+.record-table-container::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: radial-gradient(
+			circle at 20% 80%,
+			rgba(255, 107, 107, 0.03) 0%,
+			transparent 50%
+		),
+		radial-gradient(
+			circle at 80% 20%,
+			rgba(255, 140, 140, 0.03) 0%,
+			transparent 50%
+		);
+	pointer-events: none;
 }
 
 .record-table-title {
-	color: white;
+	color: #ffffff;
 	text-align: center;
-	margin-bottom: 15px;
-	font-size: 1.5rem;
+	margin: 0 0 20px 0;
+	font-size: 2em;
+	font-weight: 700;
+	background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+	position: relative;
+	z-index: 1;
 }
 
 .record-table {
 	width: 100%;
-	border-collapse: collapse;
-	color: white;
-	font-size: 1rem;
-}
-
-.record-table th,
-.record-table td {
-	padding: 12px 15px;
-	text-align: left;
-	border-bottom: 1px solid #333;
+	border-collapse: separate;
+	border-spacing: 0;
+	color: #ffffff;
+	font-size: 1.1em;
+	font-family: 'Montserrat', sans-serif;
+	position: relative;
+	z-index: 1;
+	border-radius: 15px;
+	overflow: hidden;
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .record-table th {
-	background-color: #2b2b3a;
+	background: linear-gradient(135deg, #2d3039 0%, #363a45 100%);
+	padding: 20px;
+	text-align: center;
+	font-weight: 600;
+	font-size: 1.1em;
+	color: #d0d0d0;
+	border-bottom: 2px solid rgba(255, 107, 107, 0.3);
+	position: relative;
+}
+
+.record-table th:first-child {
+	border-top-left-radius: 15px;
+}
+
+.record-table th:last-child {
+	border-top-right-radius: 15px;
+}
+
+.record-table td {
+	padding: 20px;
+	text-align: center;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.02);
+	transition: all 0.3s ease;
+	font-weight: 500;
+}
+
+.record-table tr:last-child td:first-child {
+	border-bottom-left-radius: 15px;
+}
+
+.record-table tr:last-child td:last-child {
+	border-bottom-right-radius: 15px;
+}
+
+.record-table tr:last-child td {
+	border-bottom: none;
+}
+
+.record-table td:first-child {
+	font-weight: 700;
+	color: #ff6b6b;
+	background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	font-size: 1.2em;
+}
+
+.record-table td:nth-child(2) {
+	font-weight: 600;
+	color: #ffffff;
+}
+
+.record-table td:nth-child(3) {
 	font-weight: 600;
 }
 
-.record-table tr:hover {
-	background-color: #2f2f42;
-}
-
 .record-table a {
-	color: #66ccff;
+	color: #ff6b6b;
 	text-decoration: none;
+	font-weight: 600;
+	padding: 8px 16px;
+	border-radius: 8px;
+	background: rgba(255, 107, 107, 0.1);
+	border: 1px solid rgba(255, 107, 107, 0.3);
+	transition: all 0.3s ease;
+	display: inline-block;
 }
 
 .record-table a:hover {
-	text-decoration: underline;
+	background: rgba(255, 107, 107, 0.2);
+	border-color: rgba(255, 107, 107, 0.5);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+}
+
+.record-table td:last-child:not(:has(a)) {
+	color: #666;
+	font-style: italic;
+}
+
+@media (max-width: 768px) {
+	.record-table-container {
+		padding: 30px 20px;
+		margin: 20px 10px;
+	}
+
+	.record-table-title {
+		font-size: 1.8em;
+	}
+
+	.record-table th,
+	.record-table td {
+		padding: 15px 12px;
+		font-size: 1em;
+	}
+
+	.record-table td:first-child {
+		font-size: 1.1em;
+	}
+}
+
+@media (max-width: 480px) {
+	.record-table-container {
+		padding: 25px 15px;
+	}
+
+	.record-table-title {
+		font-size: 1.5em;
+	}
+
+	.record-table th,
+	.record-table td {
+		padding: 12px 8px;
+		font-size: 0.9em;
+	}
+
+	.record-table a {
+		padding: 6px 12px;
+		font-size: 0.9em;
+	}
+}
+
+.record-table * {
+	transition: all 0.3s ease;
 }
