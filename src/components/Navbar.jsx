@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { auth } from '../api/firebase-user';
+import { onAuthStateChanged } from 'firebase/auth';
 import './Navbar.css';
 
 export default function Navbar() {
 	const [scrolled, setScrolled] = useState(false);
+	const [loggedIn, setLoggedIn] = useState(false);
 	const location = useLocation();
 
 	useEffect(() => {
@@ -14,6 +17,18 @@ export default function Navbar() {
 
 		window.addEventListener('scroll', handleScroll);
 		return () => window.removeEventListener('scroll', handleScroll);
+	}, []);
+
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				setLoggedIn(true)
+			} else {
+				setLoggedIn(false)
+			}
+		});
+
+		return () => unsubscribe();
 	}, []);
 
 	const isActive = (path) => {
@@ -38,6 +53,14 @@ export default function Navbar() {
 					<li>
 						<a href="/" className={isActive('/') ? 'active' : ''}>
 							Demon List
+						</a>
+					</li>
+					<li>
+						<a
+							href="/auth"
+							className={isActive('/auth') ? 'active' : ''}
+						>
+							{loggedIn ? 'Account' : 'Sign Up'}
 						</a>
 					</li>
 				</ul>
