@@ -6,6 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/levels': 'http://localhost:3000',
+      '/users': 'http://localhost:3000',
     },
   },
 });

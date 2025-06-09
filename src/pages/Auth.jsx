@@ -5,8 +5,8 @@ import {
 	signInWithEmailAndPassword,
 	onAuthStateChanged,
 } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../api/firebase-user';
+import axios from 'axios';
+import { auth } from '../api/firebase-user';
 import Navbar from '../components/Navbar';
 
 export default function Auth() {
@@ -96,12 +96,10 @@ export default function Auth() {
 					formData.password
 				);
 
-				// Създаване на запис в колекцията users
-				await setDoc(doc(db, 'users', userCredential.user.uid), {
-					name: formData.username,
-					playerId: null,
-					isAdmin: false,
-				});
+				axios.post("/users", {
+					username: formData.username,
+					uid: userCredential.user.uid
+				})
 			}
 
 			setFormData({
@@ -122,7 +120,6 @@ export default function Auth() {
 
 	const handleSocialLogin = (provider) => {
 		console.log(`${provider} login clicked`);
-		// Implement social login logic here
 	};
 
 	const toggleMode = () => {
