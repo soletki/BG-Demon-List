@@ -70,6 +70,10 @@
 	box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
 }
 
+.active-tab:hover{
+	background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+}
+
 .tab-content {
 	width: 100%;
 	position: relative;
