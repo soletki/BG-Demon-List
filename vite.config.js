@@ -7,6 +7,8 @@ export default defineConfig({
     proxy: {
       '/levels': 'http://localhost:3000',
       '/records': 'http://localhost:3000',
+      '/users': 'http://localhost:3000',
+      '/players': 'http://localhost:3000',
     },
   },
 });
