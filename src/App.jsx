@@ -5,6 +5,7 @@ import Auth from './pages/Auth';
 import Level from './pages/Level';
 import Leaderboard from './pages/Leaderboard';
 import Navbar from './components/Navbar';
+import Admin from './pages/Admin';
 
 function App() {
 	return (
@@ -12,6 +13,7 @@ function App() {
       <Navbar/>
 			<Routes>
 				<Route path="/" element={<DemonList />} />
+				<Route path="/admin" element={<Admin />} />
 				<Route path="/list" element={<DemonList />} />
 				<Route path="/auth" element={<Auth />} />
 				<Route path="/leaderboard" element={<Leaderboard />} />
