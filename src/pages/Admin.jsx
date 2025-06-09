@@ -43,10 +43,9 @@ export default function AdminPage() {
 		try {
 			setLoading(true);
 			const recordsData = (await axios.get('/records')).data;
-			// const claimsData = await axios.get('/claims');
-
+			const claimsData = (await axios.get('/claims')).data;
 			setRecords(recordsData);
-			// setClaims(claimsData);
+			setClaims(claimsData);
 		} catch (err) {
 			setError('Failed to load data');
 			console.error(err);
@@ -97,22 +96,13 @@ export default function AdminPage() {
 	async function handleClaim(userId, playerId, approve) {
 		try {
 			if (approve) {
-				const response = await fetch(`/users/${userId}/claim`, {
-					method: 'PATCH',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ playerId }),
+				await axios.patch(`/users/${userId}/claim`, {
+					playerId: playerId,
 				});
-
-				if (!response.ok) {
-					throw new Error('Failed to approve claim');
-				}
 			}
-			// Remove claim from list after handling
 			setClaims(claims.filter((claim) => claim.userId !== userId));
 		} catch (err) {
-			console.error('Failed to handle claim:', err);
+			console.error('Failed to handle claim:', err.message);
 		}
 	}
 
