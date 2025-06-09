@@ -98,7 +98,11 @@ export default function AdminPage() {
 			if (approve) {
 				await axios.patch(`/users/${userId}/claim`, {
 					playerId: playerId,
-				});
+				},
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				}
+			);
 			}
 			setClaims(claims.filter((claim) => claim.userId !== userId));
 		} catch (err) {
