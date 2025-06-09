@@ -17,7 +17,7 @@ router.post('/', verifyAdmin, async (req, res) => {
             progress,
             video,
             date: FieldValue.serverTimestamp(),
-            status: "pending"
+            status: "pending",
         });
         res.status(201).json({ message: 'Record added successfully!' });
     }catch (error){
@@ -28,18 +28,45 @@ router.post('/', verifyAdmin, async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-		const snapshot = await db
-			.collection('records')
-			.orderBy('date')
-			.get();
-		if (snapshot.empty) return res.sendStatus(400);
-		res.status(200).send(snapshot.docs.map((doc) => doc.data()));
-	} catch (error) {
-		res.status(500).json({ message: error.message });
-	}
-})
+        const snapshot = await db
+            .collection('records')
+            .orderBy('date')
+            .get();
 
-router.patch('/:recordId/:status', async (req,res) => {
+        if (snapshot.empty) return res.sendStatus(400);
+
+        const records = await Promise.all(snapshot.docs.map(async (doc) => {
+            const data = doc.data();
+
+            let playerName = null;
+            if (data.playerId) {
+                const playerDoc = await db.collection('players').doc(data.playerId).get();
+                playerName = playerDoc.exists ? playerDoc.data().name : null;
+            }
+
+            let levelName = null;
+            if (data.levelId) {
+                const levelDoc = await db.collection('levels').doc(data.levelId).get();
+                levelName = levelDoc.exists ? levelDoc.data().name : null;
+            }
+
+            return {
+                id: doc.id,
+                ...data,
+                playerName: playerName,
+                levelName: levelName,
+            };
+        }));
+
+        res.status(200).send(records);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+
+router.patch('/:recordId/:status', verifyAdmin, async (req,res) => {
     const recordId = req.params.recordId;
     const status = req.params.status;
 
