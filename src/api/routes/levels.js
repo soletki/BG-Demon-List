@@ -39,6 +39,7 @@ router.get('/:position', async (req, res) => {
 		const recordsSnap = await db
 			.collection('records')
 			.where('levelId', '==', levelId)
+			.where('status', '==', 'accepted')
 			.get();
 
 		const records = await Promise.all(

@@ -28,7 +28,7 @@ function calculatePoints(pos, n, l, p) {
 router.get('/', async (req, res) => {
 	try {
 		const playersSnap = await db.collection('players').get();
-		const recordsSnap = await db.collection('records').get();
+		const recordsSnap = await db.collection('records').where('status', '==', 'accepted').get();
 		const levelsSnap = await db.collection('levels').get();
 
 		const players = {};
