@@ -135,7 +135,6 @@ export default function Auth() {
 
 	return (
 		<div>
-			<Navbar />
 			<div className="auth-main-div">
 				<div className="auth-container">
 					{loading && (
