@@ -1,6 +1,5 @@
 import express from 'express';
 import { db } from '../firebase.js';
-import verifyAdmin from '../middleware/verifyAdmin.js';
 const router = express.Router();
 
 router.post('/', async (req, res) => {
