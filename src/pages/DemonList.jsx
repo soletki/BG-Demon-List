@@ -42,7 +42,6 @@ export default function DemonList() {
 	if (loading)
 		return (
 			<div>
-				<Navbar />
 				<div className="loading">Loading demon list...</div>
 			</div>
 		);
@@ -50,7 +49,6 @@ export default function DemonList() {
 	if (error)
 		return (
 			<div>
-				<Navbar />
 				<div className="loading" style={{ color: '#ff6b6b' }}>
 					Error: {error}
 				</div>
@@ -59,7 +57,6 @@ export default function DemonList() {
 
 	return (
 		<div>
-			<Navbar />
 			<div id="levels-container">
 				<div id="search-bar">
 					<input

@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import Navbar from '../components/Navbar';
 import axios from 'axios';
 import './global.css';
 import './Level.css';
@@ -31,7 +30,6 @@ export default function LevelPage() {
 	if (loading)
 		return (
 			<div>
-				<Navbar />
 				<div className="loading">Loading level details...</div>
 			</div>
 		);
@@ -39,7 +37,6 @@ export default function LevelPage() {
 	if (error)
 		return (
 			<div>
-				<Navbar />
 				<div className="error">{error}</div>
 			</div>
 		);
@@ -47,14 +44,12 @@ export default function LevelPage() {
 	if (!level)
 		return (
 			<div>
-				<Navbar />
 				<div className="error">Level data not available</div>
 			</div>
 		);
 
 	return (
 		<div>
-			<Navbar />
 			<div id="main-div">
 				<div id="level-container">
 					<h1>{level.name}</h1>

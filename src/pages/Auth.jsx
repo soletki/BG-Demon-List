@@ -7,7 +7,6 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../api/firebase-user';
-import Navbar from '../components/Navbar';
 
 export default function Auth() {
 	const [isLogin, setIsLogin] = useState(true);
@@ -138,7 +137,6 @@ export default function Auth() {
 
 	return (
 		<div>
-			<Navbar />
 			<div className="auth-main-div">
 				<div className="auth-container">
 					{loading && (
