@@ -52,7 +52,7 @@ export default function Navbar() {
 					</li>
 					<li>
 						<a href="/" className={isActive('/') ? 'active' : ''}>
-							Demon List
+							List
 						</a>
 					</li>
 					<li>
