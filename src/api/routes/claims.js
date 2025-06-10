@@ -55,4 +55,25 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.delete('/claims/:claimId', verifyAdmin, async (req, res) => {
+	const { claimId } = req.params;
+
+	try {
+		const claimRef = db.collection('claims').doc(claimId);
+		const doc = await claimRef.get();
+
+		if (!doc.exists) {
+			return res.status(404).json({ error: 'Claim not found' });
+		}
+
+		await claimRef.delete();
+
+		res.status(200).json({ message: 'Claim deleted successfully' });
+	} catch (error) {
+		console.error('Error deleting claim:', error);
+		res.status(500).json({ error: error.message });
+	}
+});
+
+
 export default router;
