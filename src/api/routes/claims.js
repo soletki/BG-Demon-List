@@ -54,7 +54,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.delete('/:claimId', verifyAdmin, async (req, res) => {
+router.delete('/:claimId', async (req, res) => {
 	const { claimId } = req.params;
 
 	try {
