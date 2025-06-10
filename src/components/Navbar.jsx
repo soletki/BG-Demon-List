@@ -3,10 +3,12 @@ import { useLocation } from 'react-router-dom';
 import { auth } from '../api/firebase-user';
 import { onAuthStateChanged } from 'firebase/auth';
 import './Navbar.css';
+import axios from 'axios';
 
 export default function Navbar() {
 	const [scrolled, setScrolled] = useState(false);
 	const [loggedIn, setLoggedIn] = useState(false);
+	const [isAdmin, setIsAdmin] = useState(false);
 	const location = useLocation();
 
 	useEffect(() => {
@@ -22,9 +24,13 @@ export default function Navbar() {
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
-				setLoggedIn(true)
+				const uid = user.uid;
+				setIsAdmin(
+					(await axios.get(`/users/${uid}/admin`)).data.isAdmin
+				);
+				setLoggedIn(true);
 			} else {
-				setLoggedIn(false)
+				setLoggedIn(false);
 			}
 		});
 
@@ -50,11 +56,16 @@ export default function Navbar() {
 							Leaderboard
 						</a>
 					</li>
-					<li>
-						<a href="/" className={isActive('/') ? 'active' : ''}>
-							List
-						</a>
-					</li>
+					{loggedIn && (
+						<li>
+							<a
+								href="/submit"
+								className={isActive('/submit') ? 'active' : ''}
+							>
+								Submit
+							</a>
+						</li>
+					)}
 					<li>
 						<a
 							href="/auth"
@@ -63,6 +74,16 @@ export default function Navbar() {
 							{loggedIn ? 'Account' : 'Sign Up'}
 						</a>
 					</li>
+					{isAdmin && (
+						<li>
+							<a
+								href="/admin"
+								className={isActive('/admin') ? 'active' : ''}
+							>
+								Admin
+							</a>
+						</li>
+					)}
 				</ul>
 			</nav>
 		</header>
