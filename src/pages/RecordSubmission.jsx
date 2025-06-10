@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../api/firebase-user';
 import './RecordSubmission.css';
 import axios from 'axios';
 
 export default function RecordSubmission() {
-	const [isLoggedIn, setIsLoggedIn] = useState(true); // Change this based on your auth state
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [playerId, setPlayerId] = useState('');
 	const [levels, setLevels] = useState([]);
 	const [formData, setFormData] = useState({
 		levelId: '',
@@ -18,15 +21,24 @@ export default function RecordSubmission() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (isLoggedIn) {
-			fetchLevels();
-		}
-	}, [isLoggedIn]);
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				const uid = await user.uid;
+				setIsLoggedIn(true);
+
+				await setPlayerId((await axios.get(`/users/${uid}/claim`)).data.playerId)
+				await fetchLevels();
+			}
+		});
+
+		return () => unsubscribe();
+	}, []);
 
 	const fetchLevels = async () => {
 		try {
 			const response = await axios.get('/levels');
 			setLevels(response.data);
+			console.log(levels)
 		} catch (err) {
 			console.error('Failed to fetch levels:', err);
 			setError('Failed to load levels');
@@ -45,6 +57,7 @@ export default function RecordSubmission() {
 		// Update selected level when level dropdown changes
 		if (name === 'levelId') {
 			const level = levels.find((l) => l.position.toString() === value);
+			console.log(level)
 			setSelectedLevel(level);
 		}
 	};
@@ -102,9 +115,10 @@ export default function RecordSubmission() {
 
 		try {
 			await axios.post('/records', {
-				levelId: parseInt(formData.levelId),
+				playerId: playerId,
+				levelId: selectedLevel.levelId,
 				progress: parseInt(formData.progress),
-				videoLink: formData.videoLink,
+				video: formData.videoLink,
 			});
 
 			setSuccess('Record submitted successfully!');
@@ -140,6 +154,25 @@ export default function RecordSubmission() {
 							onClick={() => navigate('/auth')}
 						>
 							Go to Login
+						</button>
+					</div>
+				</div>
+			</div>
+		);
+	}else if(playerId==null){
+		return (
+			<div className="record-main-div">
+				<div className="record-container">
+					<h1 className="title">No Player Claim</h1>
+					<p className="record-subtitle">
+						Please claim or create a player to submit a record
+					</p>
+					<div className="login-prompt">
+						<button
+							className="login-button"
+							onClick={() => navigate('/account')}
+						>
+							Go to Account
 						</button>
 					</div>
 				</div>
