@@ -25,8 +25,6 @@ router.get('/', async (req, res) => {
             .collection('claims')
             .get();
 
-        if (snapshot.empty) return res.sendStatus(400);
-
         const records = await Promise.all(snapshot.docs.map(async (doc) => {
             const data = doc.data();
 
@@ -56,7 +54,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.delete('/claims/:claimId', verifyAdmin, async (req, res) => {
+router.delete('/:claimId', verifyAdmin, async (req, res) => {
 	const { claimId } = req.params;
 
 	try {
