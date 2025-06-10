@@ -4,7 +4,7 @@ import { FieldValue } from 'firebase-admin/firestore';
 import verifyAdmin from '../middleware/verifyAdmin.js';
 const router = express.Router();
 
-router.post('/', verifyAdmin, async (req, res) => {
+router.post('/', async (req, res) => {
     const { playerId, levelId, progress, video } = req.body;
 
 	if (!playerId || !levelId || !progress || !video)

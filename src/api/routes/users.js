@@ -30,9 +30,31 @@ router.patch('/:uid/claim', verifyAdmin, async (req, res) => {
 		await db.collection('users').doc(uid).update({
 			playerId: playerId,
 		});
-		res.status(200).json({ message: 'Claimed player updated successfully' });
+		res.status(200).json({
+			message: 'Claimed player updated successfully',
+		});
 	} catch (error) {
 		res.status(500).json({ message: error.message });
+	}
+});
+
+router.get('/:uid/claim', async (req, res) => {
+	const { uid } = req.params;
+
+	try {
+		const userDoc = await db.collection('users').doc(uid).get();
+
+		if (!userDoc.exists) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+
+		const data = userDoc.data();
+		const playerId = data.playerId || null;
+
+		res.status(200).json({ playerId });
+	} catch (err) {
+		console.error('Error fetching playerId:', err);
+		res.status(500).json({ error: err.message });
 	}
 });
 

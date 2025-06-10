@@ -11,12 +11,20 @@ router.get('/', async (req, res) => {
 			.collection('levels')
 			.orderBy('position')
 			.get();
+
 		if (snapshot.empty) return res.sendStatus(400);
-		res.status(200).send(snapshot.docs.map((doc) => doc.data()));
+
+		const levels = snapshot.docs.map((doc) => ({
+			levelId: doc.id,
+			...doc.data(),
+		}));
+
+		res.status(200).json(levels);
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
 });
+
 
 // GET level by position
 router.get('/:position', async (req, res) => {
