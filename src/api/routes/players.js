@@ -12,7 +12,9 @@ function calculatePoints(pos, n, l, p) {
 		1 + 322 * Math.exp(-((Math.log(322) / (n - 1)) * (pos - 1)));
 
 	let scale;
-	if (p === l) {
+	if (p < l) {
+		scale = 0;
+	} else if (p === l && l != 100) {
 		scale = 0.1;
 	} else if (p >= 99 && p < 100) {
 		scale = 0.5;
@@ -28,7 +30,10 @@ function calculatePoints(pos, n, l, p) {
 router.get('/', async (req, res) => {
 	try {
 		const playersSnap = await db.collection('players').get();
-		const recordsSnap = await db.collection('records').where('status', '==', 'accepted').get();
+		const recordsSnap = await db
+			.collection('records')
+			.where('status', '==', 'accepted')
+			.get();
 		const levelsSnap = await db.collection('levels').get();
 
 		const players = {};
@@ -85,7 +90,11 @@ router.get('/', async (req, res) => {
 router.post('/', verifyAdmin, async (req, res) => {
 	const { username } = req.body;
 
-	if (!username || typeof username !== 'string' || username.trim().length < 3) {
+	if (
+		!username ||
+		typeof username !== 'string' ||
+		username.trim().length < 3
+	) {
 		return res.status(400).json({ error: 'Invalid username' });
 	}
 
