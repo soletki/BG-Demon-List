@@ -93,21 +93,27 @@ export default function AdminPage() {
 		}
 	}
 
-	async function handleClaim(userId, playerId, approve) {
+	async function handleClaim(claimId, userId, playerId, approve) {
 		try {
 			if (approve) {
-				await axios.patch(`/users/${userId}/claim`, {
-					playerId: playerId,
-				},
-				{
-					headers: { Authorization: `Bearer ${token}` },
-				}
-			);
+				await axios.patch(
+					`/users/${userId}/claim`,
+					{
+						playerId: playerId,
+					},
+					{
+						headers: { Authorization: `Bearer ${token}` },
+					}
+				);
 			}
 			setClaims(claims.filter((claim) => claim.userId !== userId));
+			await axios.delete(`/claims/${claimId}`, null, {
+				headers: { Authorization: `Bearer ${token}` },
+			});
 		} catch (err) {
 			console.error('Failed to handle claim:', err.message);
 		}
+		console.log(token);
 	}
 
 	function extractYouTubeId(url) {
@@ -368,6 +374,7 @@ export default function AdminPage() {
 											className="action-button approve-button"
 											onClick={() =>
 												handleClaim(
+													claim.claimId,
 													claim.userId,
 													claim.playerId,
 													true
