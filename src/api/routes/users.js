@@ -58,4 +58,24 @@ router.get('/:uid/claim', async (req, res) => {
 	}
 });
 
+router.get('/:uid/admin', async(req, res)=>{
+	const { uid } = req.params;
+
+	try {
+		const userDoc = await db.collection('users').doc(uid).get();
+
+		if (!userDoc.exists) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+
+		const data = userDoc.data();
+		const isAdmin = data.isAdmin || false;
+
+		res.status(200).json({ isAdmin });
+	} catch (err) {
+		console.error('Error fetching admin status:', err);
+		res.status(500).json({ error: err.message });
+	}
+})
+
 export default router;
