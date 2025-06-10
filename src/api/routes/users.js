@@ -38,7 +38,7 @@ router.patch('/:uid/claim', verifyAdmin, async (req, res) => {
 	}
 });
 
-router.get('/users/:uid/claim', async (req, res) => {
+router.get('/:uid/claim', async (req, res) => {
 	const { uid } = req.params;
 
 	try {
