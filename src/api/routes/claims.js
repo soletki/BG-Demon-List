@@ -44,6 +44,7 @@ router.get('/', async (req, res) => {
 
             return {
                 ...data,
+                claimId: doc.id,
                 playerName: playerName,
                 userName: userName,
             };
