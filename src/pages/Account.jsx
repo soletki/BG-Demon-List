@@ -13,16 +13,38 @@ export default function Account() {
 	const [error, setError] = useState(null);
 	const [selectedPlayer, setSelectedPlayer] = useState('');
 	const [isAdmin, setIsAdmin] = useState(false);
-	const [UserId, setUserId] = useState('vkDyoIcBdcQi5D8I2kcVV8KXRLh2');
+	const [UserId, setUserId] = useState('');
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
-				const uid = await user.uid;
-				setUserId(uid)
-				setIsAdmin(
-					(await axios.get(`/users/${uid}/admin`)).data.isAdmin
-				);
+				try {
+					const uid = await user.uid;
+					setUserId(uid);
+					setIsAdmin(
+						(await axios.get(`/users/${uid}/admin`)).data.isAdmin
+					);
+					const userResponse = await axios.get(`/users/${uid}`);
+					setUser(userResponse.data);
+
+					if (userResponse.data.playerId) {
+						const recordsResponse = await axios.get(
+							`/records/${userResponse.data.playerId}`
+						);
+						setRecords(recordsResponse.data);
+					}
+
+					if (!userResponse.data.playerId) {
+						setClaimlessPlayers(
+							(await axios.get('/players/claimless')).data
+						);
+					}
+				} catch (error) {
+					console.error('Failed to fetch user data:', error);
+					setError('Failed to load account data');
+				} finally {
+					setLoading(false);
+				}
 			} else {
 				console.log('No user is logged in');
 			}
@@ -30,34 +52,6 @@ export default function Account() {
 
 		return () => unsubscribe();
 	}, []);
-
-	useEffect(() => {
-		const fetchUserData = async () => {
-			try {
-				const userResponse = await axios.get(`/users/${UserId}`);
-				setUser(userResponse.data);
-
-				if (userResponse.data.playerId) {
-					const recordsResponse = await axios.get(
-						`/records/${userResponse.data.playerId}`
-					);
-					setRecords(recordsResponse.data);
-				}
-
-				if (!userResponse.data.playerId) {
-					setClaimlessPlayers(
-						(await axios.get('/players/claimless')).data
-					);
-				}
-			} catch (error) {
-				console.error('Failed to fetch user data:', error);
-				setError('Failed to load account data');
-			} finally {
-				setLoading(false);
-			}
-		};
-		fetchUserData();
-	}, [UserId]);
 
 	const handleCreatePlayer = () => {
 		axios.post('/players', {
