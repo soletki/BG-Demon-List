@@ -66,14 +66,26 @@ export default function Navbar() {
 							</a>
 						</li>
 					)}
-					<li>
-						<a
-							href="/auth"
-							className={isActive('/auth') ? 'active' : ''}
-						>
-							{loggedIn ? 'Account' : 'Sign Up'}
-						</a>
-					</li>
+					{loggedIn ? (
+						<li>
+							<a
+								href="/account"
+								className={isActive('/auth') ? 'active' : ''}
+							>
+								Account
+							</a>
+						</li>
+					) : (
+						<li>
+							<a
+								href="/auth"
+								className={isActive('/auth') ? 'active' : ''}
+							>
+								Sign Up
+							</a>
+						</li>
+					)}
+
 					{isAdmin && (
 						<li>
 							<a
