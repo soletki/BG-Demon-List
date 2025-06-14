@@ -68,10 +68,10 @@ export default function Navbar() {
 					)}
 					<li>
 						<a
-							href="/auth"
+							href={loggedIn ? "/account" : "/auth"}
 							className={isActive('/auth') ? 'active' : ''}
 						>
-							{loggedIn ? 'Account' : 'Sign Up'}
+							Account
 						</a>
 					</li>
 					{isAdmin && (

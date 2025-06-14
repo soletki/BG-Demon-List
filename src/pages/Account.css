@@ -1,0 +1,382 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+#account-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: linear-gradient(135deg, #1a1c23 0%, #2d3039 100%);
+	min-height: 100vh;
+	padding: 40px 20px;
+	font-family: 'Montserrat', sans-serif;
+}
+
+.account-section {
+	max-width: 900px;
+	width: 95%;
+	margin-bottom: 30px;
+}
+
+.account-section-header {
+	margin-bottom: 20px;
+}
+
+.account-section-header h2 {
+	color: #ffffff;
+	font-size: 1.8em;
+	font-weight: 600;
+	margin: 0;
+	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+	background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.account-info-card {
+	background: linear-gradient(135deg, #21232b 0%, #2a2d36 100%);
+	padding: 25px;
+	border-radius: 20px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+		0 1px 0 rgba(255, 255, 255, 0.1) inset;
+	transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	position: relative;
+	overflow: hidden;
+}
+
+.account-info-card::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 107, 107, 0.05),
+		transparent
+	);
+	transition: left 0.5s ease;
+}
+
+.account-info-card:hover::before {
+	left: 100%;
+}
+
+.account-info-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4),
+		0 0 15px rgba(255, 107, 107, 0.1),
+		0 1px 0 rgba(255, 255, 255, 0.1) inset;
+	border-color: rgba(255, 107, 107, 0.2);
+}
+
+.account-info-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 15px;
+	z-index: 1;
+	position: relative;
+}
+
+.account-info-item:last-child {
+	margin-bottom: 0;
+}
+
+.account-info-label {
+	color: #b0b0b0;
+	font-weight: 500;
+	font-size: 1.1em;
+}
+
+.account-info-value {
+	color: #ffffff;
+	font-weight: 600;
+	font-size: 1.1em;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.account-admin-badge {
+	background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+	padding: 6px 15px;
+	border-radius: 20px;
+	font-size: 0.9em;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.account-edit-btn {
+	background: rgba(255, 107, 107, 0.1);
+	border: 1px solid rgba(255, 107, 107, 0.3);
+	color: #ff8e8e;
+	padding: 8px;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.account-edit-btn:hover {
+	background: rgba(255, 107, 107, 0.2);
+	border-color: rgba(255, 107, 107, 0.5);
+	transform: scale(1.1);
+}
+
+.account-no-claim-section {
+	text-align: center;
+}
+
+.account-no-claim-text {
+	color: #b0b0b0;
+	font-size: 1.2em;
+	margin-bottom: 25px;
+	font-weight: 400;
+}
+
+.account-claim-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	align-items: center;
+}
+
+.account-create-player-btn {
+	background: linear-gradient(135deg, #4CAF50, #66BB6A);
+	color: white;
+	border: none;
+	padding: 12px 30px;
+	border-radius: 12px;
+	font-size: 1.1em;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+}
+
+.account-create-player-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+.account-claim-dropdown {
+	display: flex;
+	gap: 15px;
+	align-items: center;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.account-player-select {
+	background: rgba(33, 35, 43, 0.8);
+	border: 2px solid rgba(255, 255, 255, 0.1);
+	color: #ffffff;
+	padding: 12px 20px;
+	border-radius: 12px;
+	font-size: 1em;
+	font-family: 'Montserrat', sans-serif;
+	min-width: 200px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.account-player-select:focus {
+	border-color: #ff6b6b;
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
+}
+
+.account-player-select option {
+	background: #2a2d36;
+	color: #ffffff;
+}
+
+.account-claim-btn {
+	background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+	color: white;
+	border: none;
+	padding: 12px 25px;
+	border-radius: 12px;
+	font-size: 1em;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+}
+
+.account-claim-btn:hover:not(:disabled) {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+.account-claim-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.account-records-list {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+.account-record-item {
+	background: linear-gradient(135deg, #21232b 0%, #2a2d36 100%);
+	padding: 20px;
+	border-radius: 15px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+	transition: all 0.3s ease;
+	position: relative;
+	overflow: hidden;
+}
+
+.account-record-item:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.account-record-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.account-record-level {
+	color: #ffffff;
+	font-size: 1.3em;
+	font-weight: 600;
+	margin: 0;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.account-record-status {
+	padding: 6px 12px;
+	border-radius: 20px;
+	font-size: 0.85em;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.account-record-status.accepted {
+	background: #4CAF50;
+	color: white;
+}
+
+.account-record-status.pending {
+	background: #FFC107;
+	color: #333;
+}
+
+.account-record-status.rejected {
+	background: #F44336;
+	color: white;
+}
+
+.account-record-details {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 15px;
+}
+
+.account-record-progress,
+.account-record-date,
+.account-record-video {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.account-progress-label,
+.account-date-label {
+	color: #b0b0b0;
+	font-size: 0.9em;
+	font-weight: 500;
+}
+
+.account-progress-value,
+.account-date-value {
+	color: #ffffff;
+	font-weight: 600;
+}
+
+.account-record-video a {
+	color: #ff8e8e;
+	text-decoration: none;
+	font-weight: 600;
+	transition: all 0.3s ease;
+}
+
+.account-record-video a:hover {
+	color: #ff6b6b;
+	text-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+}
+
+.account-no-records {
+	text-align: center;
+	padding: 40px;
+}
+
+.account-no-records p {
+	color: #b0b0b0;
+	font-size: 1.2em;
+	margin: 0;
+}
+
+.account-loading {
+	color: #ffffff;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 1.2em;
+	text-align: center;
+	margin-top: 50px;
+}
+
+@media (max-width: 768px) {
+	.account-claim-dropdown {
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.account-player-select {
+		width: 100%;
+		min-width: auto;
+	}
+
+	.account-record-details {
+		grid-template-columns: 1fr;
+	}
+
+	.account-record-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
+
+	.account-info-item {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
+}
+
+@media (max-width: 480px) {
+	#account-container {
+		padding: 20px 10px;
+	}
+
+	.account-section-header h2 {
+		font-size: 1.5em;
+	}
+
+	.account-info-card {
+		padding: 20px;
+	}
+}
