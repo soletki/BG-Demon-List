@@ -17,9 +17,9 @@ export default function AdminPage() {
 	const [playerFilter, setPlayerFilter] = useState('');
 	const [levelFilter, setLevelFilter] = useState('');
 	const [statusFilters, setStatusFilters] = useState({
-		accepted: true,
+		accepted: false,
 		pending: true,
-		rejected: true,
+		rejected: false,
 	});
 
 	useEffect(() => {
