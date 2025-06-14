@@ -113,7 +113,6 @@ export default function AdminPage() {
 		} catch (err) {
 			console.error('Failed to handle claim:', err.message);
 		}
-		console.log(token);
 	}
 
 	function extractYouTubeId(url) {
@@ -388,6 +387,7 @@ export default function AdminPage() {
 											className="action-button reject-button"
 											onClick={() =>
 												handleClaim(
+													claim.claimId,
 													claim.userId,
 													claim.playerId,
 													false
