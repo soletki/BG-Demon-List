@@ -30,6 +30,9 @@ router.patch('/:uid/claim', verifyAdmin, async (req, res) => {
 		await db.collection('users').doc(uid).update({
 			playerId: playerId,
 		});
+		await db.collection('players').doc(playerId).update({
+			claimed: true,
+		});
 		res.status(200).json({
 			message: 'Claimed player updated successfully',
 		});

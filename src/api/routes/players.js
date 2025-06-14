@@ -113,6 +113,7 @@ router.post('/', async (req, res) => {
 
 		const playerData = {
 			name: username.trim(),
+			claimed: false
 		};
 
 		await newPlayerRef.set(playerData);
