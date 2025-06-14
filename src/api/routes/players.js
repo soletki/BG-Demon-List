@@ -87,7 +87,7 @@ router.get('/', async (req, res) => {
 	}
 });
 
-router.post('/', verifyAdmin, async (req, res) => {
+router.post('/', async (req, res) => {
 	const { username } = req.body;
 
 	if (
@@ -125,6 +125,29 @@ router.post('/', verifyAdmin, async (req, res) => {
 		console.error('Error creating player:', err);
 		res.status(500).json({ error: 'Failed to create player' });
 	}
+});
+
+router.get('/claimless', async (req, res) => {
+  try {
+    const snapshot = await db
+      .collection('players')
+      .where('claimed', '==', false)
+      .get();
+
+    if (snapshot.empty) {
+      return res.status(200).json([]);
+    }
+
+    const claimlessPlayers = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return res.json(claimlessPlayers);
+  } catch (err) {
+    console.error('Error fetching claimless players:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 export default router;
