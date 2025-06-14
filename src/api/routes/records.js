@@ -64,7 +64,45 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/:playerId', async (req, res) => {
+    const playerIdParm = req.params.playerId;
 
+    try {
+        const snapshot = await db
+            .collection('records')
+            .where('playerId', '==', playerIdParm)
+            .orderBy('date')
+            .get();
+
+
+        const records = await Promise.all(snapshot.docs.map(async (doc) => {
+            const data = doc.data();
+
+            let playerName = null;
+            if (data.playerId) {
+                const playerDoc = await db.collection('players').doc(data.playerId).get();
+                playerName = playerDoc.exists ? playerDoc.data().name : null;
+            }
+
+            let levelName = null;
+            if (data.levelId) {
+                const levelDoc = await db.collection('levels').doc(data.levelId).get();
+                levelName = levelDoc.exists ? levelDoc.data().name : null;
+            }
+
+            return {
+                id: doc.id,
+                ...data,
+                playerName: playerName,
+                levelName: levelName,
+            };
+        }));
+
+        res.status(200).send(records);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 router.patch('/:recordId/:status', verifyAdmin, async (req,res) => {
     const recordId = req.params.recordId;
