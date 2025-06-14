@@ -339,6 +339,63 @@
 	margin-top: 50px;
 }
 
+/* Logout Button Styles */
+.account-logout-container {
+	display: flex;
+	justify-content: center;
+	padding-top: 20px;
+}
+
+.account-logout-btn {
+	background: linear-gradient(135deg, #e74c3c, #c0392b);
+	color: white;
+	border: none;
+	padding: 14px 30px;
+	border-radius: 12px;
+	font-size: 1.1em;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-family: 'Montserrat', sans-serif;
+	position: relative;
+	overflow: hidden;
+}
+
+.account-logout-btn::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 255, 255, 0.1),
+		transparent
+	);
+	transition: left 0.5s ease;
+}
+
+.account-logout-btn:hover::before {
+	left: 100%;
+}
+
+.account-logout-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+	background: linear-gradient(135deg, #c0392b, #a93226);
+}
+
+.account-logout-btn:active {
+	transform: translateY(0);
+	box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
 @media (max-width: 768px) {
 	.account-claim-dropdown {
 		flex-direction: column;
@@ -365,6 +422,11 @@
 		align-items: flex-start;
 		gap: 10px;
 	}
+
+	.account-logout-btn {
+		padding: 12px 25px;
+		font-size: 1em;
+	}
 }
 
 @media (max-width: 480px) {
@@ -378,5 +440,10 @@
 
 	.account-info-card {
 		padding: 20px;
+	}
+
+	.account-logout-btn {
+		padding: 10px 20px;
+		font-size: 0.95em;
 	}
 }
