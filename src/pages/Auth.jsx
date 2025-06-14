@@ -110,6 +110,7 @@ export default function Auth() {
 			});
 
 			console.log('Login/Register successful');
+			window.location.assign('/account')
 		} catch (err) {
 			console.error(err);
 			setError('Authentication failed');
