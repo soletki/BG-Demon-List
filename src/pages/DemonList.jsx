@@ -77,12 +77,11 @@ export default function DemonList() {
 				video: addForm.video,
 				requirement: parseInt(addForm.requirement),
 			};
-			console.log(userToken)
+			console.log(userToken);
 			await axios.post('/levels', levelData, {
 				headers: { Authorization: `Bearer ${userToken}` },
 			});
 
-			// Refresh levels list
 			setLoading(true);
 			const response = await axios.get('/levels');
 			const sorted = response.data.sort(
@@ -91,7 +90,6 @@ export default function DemonList() {
 			setLevels(sorted);
 			setLoading(false);
 
-			// Reset form and close modal
 			setAddForm({
 				name: '',
 				position: '',
@@ -109,6 +107,35 @@ export default function DemonList() {
 	};
 	const handleRemoveLevel = async (e) => {
 		e.preventDefault();
+		if (!selectedLevelToRemove) return;
+
+		setIsSubmitting(true);
+
+		try {
+			console.log(userToken);
+			await axios.delete(
+				`/levels/${encodeURIComponent(selectedLevelToRemove)}`,
+				{
+					headers: { Authorization: `Bearer ${userToken}` },
+				}
+			);
+
+			setLoading(true);
+			const response = await axios.get('/levels');
+			const sorted = response.data.sort(
+				(a, b) => a.position - b.position
+			);
+			setLevels(sorted);
+			setLoading(false);
+
+			setSelectedLevelToRemove('');
+			setShowRemoveModal(false);
+		} catch (error) {
+			console.error('Failed to remove level:', error);
+			alert('Failed to remove level. Please try again.');
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	const filteredLevels = levels
