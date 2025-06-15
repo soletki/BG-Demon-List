@@ -79,12 +79,11 @@ router.get('/:position', async (req, res) => {
 
 // POST new level (admin only)
 router.post('/', verifyAdmin, async (req, res) => {
-	const { name, position, creators, verifier, video, requirement } = req.body;
+	const { name, position, creators, video, requirement } = req.body;
 	if (
 		!name ||
 		position == null ||
 		!creators ||
-		!verifier ||
 		!video ||
 		!requirement
 	)
@@ -111,7 +110,6 @@ router.post('/', verifyAdmin, async (req, res) => {
 			name,
 			position: insertPosition,
 			creators,
-			verifier,
 			video,
 			requirement,
 		});
