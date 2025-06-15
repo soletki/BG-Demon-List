@@ -23,7 +23,7 @@ export default function Navbar() {
 	return (
 		<header className={scrolled ? 'scrolled' : ''}>
 			<h3 id="logo">
-				<a href="/">BDL</a>
+				<a href="/">BGDL</a>
 			</h3>
 			<nav>
 				<ul id="nav_links">
