@@ -2,15 +2,41 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './DemonList.css';
 import './global.css';
-import Navbar from '../components/Navbar';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../api/firebase-user';
 
 export default function DemonList() {
 	const [levels, setLevels] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [isAdmin, setIsAdmin] = useState(false);
+	const [userToken, setUserToken] = useState('');
+	const [showAddModal, setShowAddModal] = useState(false);
+	const [showRemoveModal, setShowRemoveModal] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const [addForm, setAddForm] = useState({
+		name: '',
+		position: '',
+		creators: '',
+		video: '',
+		requirement: '',
+	});
+
+	const [selectedLevelToRemove, setSelectedLevelToRemove] = useState('');
 
 	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				const uid = user.uid;
+				const token = await user.getIdToken();
+				setIsAdmin(
+					(await axios.get(`/users/${uid}/admin`)).data.isAdmin
+				);
+				setUserToken(token);
+			}
+		});
 		const fetchLevels = async () => {
 			try {
 				const response = await axios.get('/levels');
@@ -31,7 +57,59 @@ export default function DemonList() {
 			}
 		};
 		fetchLevels();
+		() => unsubscribe();
 	}, []);
+
+	const handleAddLevel = async (e) => {
+		e.preventDefault();
+		setIsSubmitting(true);
+
+		try {
+			const creatorsArray = addForm.creators
+				.split(',')
+				.map((creator) => creator.trim())
+				.filter((creator) => creator.length > 0);
+
+			const levelData = {
+				name: addForm.name,
+				position: parseInt(addForm.position),
+				creators: creatorsArray,
+				video: addForm.video,
+				requirement: parseInt(addForm.requirement),
+			};
+			console.log(userToken)
+			await axios.post('/levels', levelData, {
+				headers: { Authorization: `Bearer ${userToken}` },
+			});
+
+			// Refresh levels list
+			setLoading(true);
+			const response = await axios.get('/levels');
+			const sorted = response.data.sort(
+				(a, b) => a.position - b.position
+			);
+			setLevels(sorted);
+			setLoading(false);
+
+			// Reset form and close modal
+			setAddForm({
+				name: '',
+				position: '',
+				creators: '',
+				video: '',
+				requirement: '',
+			});
+			setShowAddModal(false);
+		} catch (error) {
+			console.error('Failed to add level:', error);
+			alert('Failed to add level. Please try again.');
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+	const handleRemoveLevel = async (e) => {
+		e.preventDefault();
+	};
 
 	const filteredLevels = levels
 		.filter((level) =>
@@ -65,6 +143,24 @@ export default function DemonList() {
 						value={searchTerm}
 						onChange={(e) => setSearchTerm(e.target.value)}
 					/>
+					{isAdmin && (
+						<div className="admin-controls">
+							<button
+								className="admin-btn add-btn"
+								onClick={() => setShowAddModal(true)}
+								title="Add Level"
+							>
+								+
+							</button>
+							<button
+								className="admin-btn remove-btn"
+								onClick={() => setShowRemoveModal(true)}
+								title="Remove Level"
+							>
+								−
+							</button>
+						</div>
+					)}
 				</div>
 				{filteredLevels.length === 0 && searchTerm && (
 					<div className="loading">
@@ -101,6 +197,200 @@ export default function DemonList() {
 					);
 				})}
 			</div>
+
+			{/* Add Level Modal */}
+			{showAddModal && (
+				<div
+					className="modal-overlay"
+					onClick={() => setShowAddModal(false)}
+				>
+					<div
+						className="modal-content"
+						onClick={(e) => e.stopPropagation()}
+					>
+						<div className="modal-header">
+							<h3>Add New Level</h3>
+							<button
+								className="modal-close"
+								onClick={() => setShowAddModal(false)}
+							>
+								×
+							</button>
+						</div>
+						<form onSubmit={handleAddLevel} className="modal-form">
+							<div className="form-group">
+								<label htmlFor="name">Level Name</label>
+								<input
+									type="text"
+									id="name"
+									value={addForm.name}
+									onChange={(e) =>
+										setAddForm({
+											...addForm,
+											name: e.target.value,
+										})
+									}
+									required
+								/>
+							</div>
+							<div className="form-group">
+								<label htmlFor="position">Position</label>
+								<input
+									type="number"
+									id="position"
+									value={addForm.position}
+									onChange={(e) =>
+										setAddForm({
+											...addForm,
+											position: e.target.value,
+										})
+									}
+									min="1"
+									required
+								/>
+							</div>
+							<div className="form-group">
+								<label htmlFor="creators">
+									Creators (comma-separated)
+								</label>
+								<input
+									type="text"
+									id="creators"
+									value={addForm.creators}
+									onChange={(e) =>
+										setAddForm({
+											...addForm,
+											creators: e.target.value,
+										})
+									}
+									placeholder="Creator1, Creator2, Creator3"
+									required
+								/>
+							</div>
+							<div className="form-group">
+								<label htmlFor="video">YouTube Video URL</label>
+								<input
+									type="url"
+									id="video"
+									value={addForm.video}
+									onChange={(e) =>
+										setAddForm({
+											...addForm,
+											video: e.target.value,
+										})
+									}
+									required
+								/>
+							</div>
+							<div className="form-group">
+								<label htmlFor="requirement">
+									Requirement Percentage
+								</label>
+								<input
+									type="number"
+									id="requirement"
+									value={addForm.requirement}
+									onChange={(e) =>
+										setAddForm({
+											...addForm,
+											requirement: e.target.value,
+										})
+									}
+									min="1"
+									max="100"
+									required
+								/>
+							</div>
+							<div className="modal-actions">
+								<button
+									type="button"
+									className="btn-secondary"
+									onClick={() => setShowAddModal(false)}
+								>
+									Cancel
+								</button>
+								<button
+									type="submit"
+									className="btn-primary"
+									disabled={isSubmitting}
+								>
+									{isSubmitting ? 'Adding...' : 'Add Level'}
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			)}
+			{/* Remove Level Modal */}
+			{showRemoveModal && (
+				<div
+					className="modal-overlay"
+					onClick={() => setShowRemoveModal(false)}
+				>
+					<div
+						className="modal-content"
+						onClick={(e) => e.stopPropagation()}
+					>
+						<div className="modal-header">
+							<h3>Remove Level</h3>
+							<button
+								className="modal-close"
+								onClick={() => setShowRemoveModal(false)}
+							>
+								×
+							</button>
+						</div>
+						<form
+							onSubmit={handleRemoveLevel}
+							className="modal-form"
+						>
+							<div className="form-group">
+								<label htmlFor="levelSelect">
+									Select Level to Remove
+								</label>
+								<select
+									id="levelSelect"
+									value={selectedLevelToRemove}
+									onChange={(e) =>
+										setSelectedLevelToRemove(e.target.value)
+									}
+									required
+								>
+									<option value="">Choose a level...</option>
+									{levels.map((level) => (
+										<option
+											key={level.position}
+											value={level.name}
+										>
+											#{level.position} - {level.name}
+										</option>
+									))}
+								</select>
+							</div>
+							<div className="modal-actions">
+								<button
+									type="button"
+									className="btn-secondary"
+									onClick={() => setShowRemoveModal(false)}
+								>
+									Cancel
+								</button>
+								<button
+									type="submit"
+									className="btn-danger"
+									disabled={
+										isSubmitting || !selectedLevelToRemove
+									}
+								>
+									{isSubmitting
+										? 'Removing...'
+										: 'Remove Level'}
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
