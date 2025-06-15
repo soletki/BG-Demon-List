@@ -4,10 +4,11 @@ import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 	onAuthStateChanged,
+	signInWithPopup,
+	GoogleAuthProvider
 } from 'firebase/auth';
 import axios from 'axios';
 import { auth } from '../api/firebase-user';
-import Navbar from '../components/Navbar';
 
 export default function Auth() {
 	const [isLogin, setIsLogin] = useState(true);
@@ -29,9 +30,6 @@ export default function Auth() {
 				});
 
 				const token = await user.getIdToken();
-				console.log('ID Token:', token);
-			} else {
-				console.log('No user is logged in');
 			}
 		});
 
@@ -109,7 +107,6 @@ export default function Auth() {
 				confirmPassword: '',
 			});
 
-			console.log('Login/Register successful');
 			window.location.assign('/account')
 		} catch (err) {
 			console.error(err);
@@ -119,8 +116,8 @@ export default function Auth() {
 		}
 	};
 
-	const handleSocialLogin = (provider) => {
-		console.log(`${provider} login clicked`);
+	const handleSocialLogin = () => {
+		console.log(`Google login clicked`);
 	};
 
 	const toggleMode = () => {
@@ -239,19 +236,11 @@ export default function Auth() {
 					<div className="social-buttons">
 						<button
 							className="social-button"
-							onClick={() => handleSocialLogin('Google')}
+							onClick={() => handleSocialLogin()}
 							type="button"
 						>
 							<span className="social-icon">G</span>
 							Continue with Google
-						</button>
-						<button
-							className="social-button"
-							onClick={() => handleSocialLogin('Discord')}
-							type="button"
-						>
-							<span className="social-icon">D</span>
-							Continue with Discord
 						</button>
 					</div>
 
