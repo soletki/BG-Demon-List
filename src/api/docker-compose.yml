@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  api:
+    image: BGDL-API
+    ports:
+      - "3000:3000"
+    secrets:
+      - firebase_key.json
+
+secrets:
+  firebase_key.json:
+    external: true
