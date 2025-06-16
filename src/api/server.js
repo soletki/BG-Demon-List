@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import levelsRouter from './routes/levels.js';
 import playersRouter from './routes/players.js'
 import usersRouter from './routes/users.js'
@@ -8,6 +9,7 @@ import claimsRouter from './routes/claims.js'
 const app = express();
 const port = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 // Routes
