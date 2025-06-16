@@ -4,7 +4,33 @@ import verifyAdmin from '../middleware/verifyAdmin.js';
 
 const router = express.Router();
 
-// GET all levels
+/**
+ * @swagger
+ * tags:
+ *   name: Levels
+ *   description: Level management (CRUD)
+ */
+
+/**
+ * @swagger
+ * /levels:
+ *   get:
+ *     summary: Get all levels
+ *     tags: [Levels]
+ *     responses:
+ *       200:
+ *         description: List of levels
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       400:
+ *         description: No levels found
+ *       500:
+ *         description: Internal server error
+ */
 router.get('/', async (req, res) => {
 	try {
 		const snapshot = await db
@@ -25,8 +51,29 @@ router.get('/', async (req, res) => {
 	}
 });
 
-
-// GET level by position
+/**
+ * @swagger
+ * /levels/{position}:
+ *   get:
+ *     summary: Get level by position
+ *     tags: [Levels]
+ *     parameters:
+ *       - in: path
+ *         name: position
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Position of the level
+ *     responses:
+ *       200:
+ *         description: Level data with accepted records
+ *       400:
+ *         description: Invalid position
+ *       404:
+ *         description: Level not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:position', async (req, res) => {
 	const position = parseInt(req.params.position, 10);
 	if (isNaN(position))
@@ -77,7 +124,40 @@ router.get('/:position', async (req, res) => {
 	}
 });
 
-// POST new level (admin only)
+/**
+ * @swagger
+ * /levels:
+ *   post:
+ *     summary: Add a new level (admin only)
+ *     tags: [Levels]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, position, creators, video, requirement]
+ *             properties:
+ *               name:
+ *                 type: string
+ *               position:
+ *                 type: integer
+ *               creators:
+ *                 type: string
+ *               video:
+ *                 type: string
+ *               requirement:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: Level added successfully
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Failed to add level
+ */
 router.post('/', verifyAdmin, async (req, res) => {
 	const { name, position, creators, video, requirement } = req.body;
 	if (
@@ -120,7 +200,28 @@ router.post('/', verifyAdmin, async (req, res) => {
 	}
 });
 
-// DELETE level by name (admin only)
+/**
+ * @swagger
+ * /levels/{name}:
+ *   delete:
+ *     summary: Delete a level by name (admin only)
+ *     tags: [Levels]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Level deleted and positions updated
+ *       404:
+ *         description: Level not found
+ *       500:
+ *         description: Failed to delete level
+ */
 router.delete('/:name', verifyAdmin, async (req, res) => {
 	const levelName = req.params.name;
 
@@ -156,6 +257,35 @@ router.delete('/:name', verifyAdmin, async (req, res) => {
 	}
 });
 
+/**
+ * @swagger
+ * /levels/{name}/move/{newPosition}:
+ *   patch:
+ *     summary: Move a level to a new position (admin only)
+ *     tags: [Levels]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: newPosition
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Level moved successfully
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: Level not found
+ *       500:
+ *         description: Failed to move level
+ */
 router.patch('/:name/move/:newPosition', verifyAdmin, async (req, res) => {
 	const levelName = req.params.name;
 	const newPosition = parseInt(req.params.newPosition, 10);

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv'
+import { swaggerUi, swaggerSpec } from './config/swagger.js';
 import levelsRouter from './routes/levels.js';
 import playersRouter from './routes/players.js'
 import usersRouter from './routes/users.js'
@@ -18,7 +19,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Routes
 app.use('/levels', levelsRouter);
 app.use('/players', playersRouter);
@@ -28,4 +29,5 @@ app.use('/claims', claimsRouter);
 
 app.listen(port, () => {
 	console.log(`Server has started on http://localhost:${port}`);
+  console.log(`API docs at http://localhost:${port}/api-docs`);
 });

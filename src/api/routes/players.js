@@ -27,6 +27,53 @@ function calculatePoints(pos, n, l, p) {
 	return basePoints * scale;
 }
 
+
+/**
+ * @swagger
+ * tags:
+ *   name: Players
+ *   description: Player management and leaderboard
+ */
+
+/**
+ * @swagger
+ * /players:
+ *   get:
+ *     summary: Get all players with their total points and rank
+ *     tags: [Players]
+ *     responses:
+ *       200:
+ *         description: A list of players with computed points and rank
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   points:
+ *                     type: number
+ *                   records:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         level:
+ *                           type: string
+ *                         position:
+ *                           type: integer
+ *                         progress:
+ *                           type: number
+ *                         video:
+ *                           type: string
+ *                   rank:
+ *                     type: integer
+ */
+
 router.get('/', async (req, res) => {
 	try {
 		const playersSnap = await db.collection('players').get();
@@ -87,6 +134,46 @@ router.get('/', async (req, res) => {
 	}
 });
 
+/**
+ * @swagger
+ * /players:
+ *   post:
+ *     summary: Create a new player
+ *     tags: [Players]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: "Toni"
+ *     responses:
+ *       201:
+ *         description: Player created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 claimed:
+ *                   type: boolean
+ *       400:
+ *         description: Invalid username
+ *       409:
+ *         description: Username already taken
+ *       500:
+ *         description: Failed to create player
+ */
+
 router.post('/', async (req, res) => {
 	const { username } = req.body;
 
@@ -113,7 +200,7 @@ router.post('/', async (req, res) => {
 
 		const playerData = {
 			name: username.trim(),
-			claimed: false
+			claimed: false,
 		};
 
 		await newPlayerRef.set(playerData);
@@ -128,27 +215,53 @@ router.post('/', async (req, res) => {
 	}
 });
 
+/**
+ * @swagger
+ * /players/claimless:
+ *   get:
+ *     summary: Get all players that are not claimed
+ *     tags: [Players]
+ *     responses:
+ *       200:
+ *         description: A list of unclaimed players
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   claimed:
+ *                     type: boolean
+ *       500:
+ *         description: Internal server error
+ */
+
 router.get('/claimless', async (req, res) => {
-  try {
-    const snapshot = await db
-      .collection('players')
-      .where('claimed', '==', false)
-      .get();
+	try {
+		const snapshot = await db
+			.collection('players')
+			.where('claimed', '==', false)
+			.get();
 
-    if (snapshot.empty) {
-      return res.status(200).json([]);
-    }
+		if (snapshot.empty) {
+			return res.status(200).json([]);
+		}
 
-    const claimlessPlayers = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+		const claimlessPlayers = snapshot.docs.map((doc) => ({
+			id: doc.id,
+			...doc.data(),
+		}));
 
-    return res.json(claimlessPlayers);
-  } catch (err) {
-    console.error('Error fetching claimless players:', err);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+		return res.json(claimlessPlayers);
+	} catch (err) {
+		console.error('Error fetching claimless players:', err);
+		return res.status(500).json({ error: 'Internal server error' });
+	}
 });
 
 export default router;

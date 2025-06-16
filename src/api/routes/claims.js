@@ -3,6 +3,49 @@ import { db } from '../firebase.js';
 import verifyAdmin from '../middleware/verifyAdmin.js';
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Claims
+ *   description: Handle user claims on player profiles
+ */
+
+/**
+ * @swagger
+ * /claims:
+ *   post:
+ *     summary: Create a new claim
+ *     tags: [Claims]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - playerId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 example: "abc123"
+ *               playerId:
+ *                 type: string
+ *                 example: "def456"
+ *     responses:
+ *       200:
+ *         description: Claim created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ */
+
 router.post('/', async (req, res) => {
 	const { userId, playerId } = req.body;
 
@@ -18,6 +61,38 @@ router.post('/', async (req, res) => {
 		res.status(500).json({ message: error.message });
 	}
 });
+
+/**
+ * @swagger
+ * /claims:
+ *   get:
+ *     summary: Get all claims with player and user names
+ *     tags: [Claims]
+ *     responses:
+ *       200:
+ *         description: List of claims
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   claimId:
+ *                     type: string
+ *                   userId:
+ *                     type: string
+ *                   playerId:
+ *                     type: string
+ *                   userName:
+ *                     type: string
+ *                     nullable: true
+ *                   playerName:
+ *                     type: string
+ *                     nullable: true
+ *       500:
+ *         description: Internal server error
+ */
 
 router.get('/', async (req, res) => {
 	try {
@@ -53,6 +128,35 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+/**
+ * @swagger
+ * /claims/{claimId}:
+ *   delete:
+ *     summary: Delete a claim by ID
+ *     tags: [Claims]
+ *     parameters:
+ *       - in: path
+ *         name: claimId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the claim to delete
+ *     responses:
+ *       200:
+ *         description: Claim deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Claim not found
+ *       500:
+ *         description: Error deleting claim
+ */
 
 router.delete('/:claimId', async (req, res) => {
 	const { claimId } = req.params;

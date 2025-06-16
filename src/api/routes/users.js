@@ -3,6 +3,38 @@ import { db } from '../firebase.js';
 import verifyAdmin from '../middleware/verifyAdmin.js';
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User registration, admin status, and player claiming
+ */
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [username, uid]
+ *             properties:
+ *               username:
+ *                 type: string
+ *               uid:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User added successfully
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Server error
+ */
 router.post('/', async (req, res) => {
 	const { username, uid } = req.body;
 
@@ -22,6 +54,37 @@ router.post('/', async (req, res) => {
 	}
 });
 
+/**
+ * @swagger
+ * /users/{uid}/claim:
+ *   patch:
+ *     summary: Link a user to a player profile (admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: uid
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: UID of the user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [playerId]
+ *             properties:
+ *               playerId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Player claimed successfully
+ *       500:
+ *         description: Server error
+ */
 router.patch('/:uid/claim', verifyAdmin, async (req, res) => {
 	const uid = req.params.uid;
 	const { playerId } = req.body;
@@ -41,6 +104,27 @@ router.patch('/:uid/claim', verifyAdmin, async (req, res) => {
 	}
 });
 
+/**
+ * @swagger
+ * /users/{uid}/claim:
+ *   get:
+ *     summary: Get player's ID associated with user
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: uid
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: UID of the user
+ *     responses:
+ *       200:
+ *         description: Player ID found
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:uid/claim', async (req, res) => {
 	const { uid } = req.params;
 
@@ -61,6 +145,27 @@ router.get('/:uid/claim', async (req, res) => {
 	}
 });
 
+/**
+ * @swagger
+ * /users/{uid}/admin:
+ *   get:
+ *     summary: Check if a user is an admin
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: uid
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: UID of the user
+ *     responses:
+ *       200:
+ *         description: Returns isAdmin status
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/:uid/admin', async (req, res) => {
 	const { uid } = req.params;
 
@@ -80,7 +185,27 @@ router.get('/:uid/admin', async (req, res) => {
 		res.status(500).json({ error: err.message });
 	}
 });
-
+/**
+ * @swagger
+ * /users/{uid}:
+ *   get:
+ *     summary: Get user details (including player name if claimed)
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: uid
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: UID of the user
+ *     responses:
+ *       200:
+ *         description: User details
+ *       404:
+ *         description: User or player not found
+ *       500:
+ *         description: Internal server error
+ */
 router.get('/:uid', async (req, res) => {
 	const { uid } = req.params;
 

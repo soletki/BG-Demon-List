@@ -4,6 +4,43 @@ import { FieldValue } from 'firebase-admin/firestore';
 import verifyAdmin from '../middleware/verifyAdmin.js';
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Records
+ *   description: Player record submissions and moderation
+ */
+
+/**
+ * @swagger
+ * /records:
+ *   post:
+ *     summary: Submit a new record
+ *     tags: [Records]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [playerId, levelId, progress, video]
+ *             properties:
+ *               playerId:
+ *                 type: string
+ *               levelId:
+ *                 type: string
+ *               progress:
+ *                 type: number
+ *               video:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Record submitted successfully
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Server error
+ */
 router.post('/', async (req, res) => {
     const { playerId, levelId, progress, video } = req.body;
 
@@ -26,6 +63,20 @@ router.post('/', async (req, res) => {
     }
 })
 
+/**
+ * @swagger
+ * /records:
+ *   get:
+ *     summary: Get all submitted records
+ *     tags: [Records]
+ *     responses:
+ *       200:
+ *         description: List of all records
+ *       400:
+ *         description: No records found
+ *       500:
+ *         description: Server error
+ */
 router.get('/', async (req, res) => {
     try {
         const snapshot = await db
@@ -64,6 +115,25 @@ router.get('/', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /records/{playerId}:
+ *   get:
+ *     summary: Get records by player ID
+ *     tags: [Records]
+ *     parameters:
+ *       - in: path
+ *         name: playerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the player
+ *     responses:
+ *       200:
+ *         description: List of records by player
+ *       500:
+ *         description: Server error
+ */
 router.get('/:playerId', async (req, res) => {
     const playerIdParm = req.params.playerId;
 
@@ -104,6 +174,33 @@ router.get('/:playerId', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /records/{recordId}/{status}:
+ *   patch:
+ *     summary: Update the status of a record (admin only)
+ *     tags: [Records]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: recordId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the record
+ *       - in: path
+ *         name: status
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: New status (e.g. accepted, rejected)
+ *     responses:
+ *       200:
+ *         description: Status updated successfully
+ *       500:
+ *         description: Server error
+ */
 router.patch('/:recordId/:status', verifyAdmin, async (req,res) => {
     const recordId = req.params.recordId;
     const status = req.params.status;
