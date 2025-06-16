@@ -32,14 +32,14 @@ export default function DemonList() {
 				const uid = user.uid;
 				const token = await user.getIdToken();
 				setIsAdmin(
-					(await axios.get(`/users/${uid}/admin`)).data.isAdmin
+					(await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/${uid}/admin`)).data.isAdmin
 				);
 				setUserToken(token);
 			}
 		});
 		const fetchLevels = async () => {
 			try {
-				const response = await axios.get('/levels');
+				const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/levels`);
 				if (Array.isArray(response.data)) {
 					const sorted = response.data.sort(
 						(a, b) => a.position - b.position
