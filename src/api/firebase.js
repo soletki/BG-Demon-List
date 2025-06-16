@@ -3,7 +3,7 @@ import fs from 'fs';
 
 let serviceAccount;
 
-const secretPath = '/run/secrets/firebase_key.json';
+const secretPath = '/etc/secrets/firebase_key.json';
 if (fs.existsSync(secretPath)) {
   serviceAccount = JSON.parse(fs.readFileSync(secretPath, 'utf8'));
 } else {
