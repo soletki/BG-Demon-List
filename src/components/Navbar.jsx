@@ -26,7 +26,7 @@ export default function Navbar() {
 			if (user) {
 				const uid = user.uid;
 				setIsAdmin(
-					(await axios.get(`/users/${uid}/admin`)).data.isAdmin
+					(await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/${uid}/admin`)).data.isAdmin
 				);
 				setLoggedIn(true);
 			} else {

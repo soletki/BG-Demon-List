@@ -15,7 +15,7 @@ export default function LevelPage() {
 		async function fetchLevel() {
 			try {
 				setLoading(true);
-				const response = await axios.get(`/levels/${position}`);
+				const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/levels/${position}`);
 				setLevel(response.data);
 			} catch (err) {
 				setError('Level not found or failed to load.');

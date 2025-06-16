@@ -42,8 +42,8 @@ export default function AdminPage() {
 	async function fetchData() {
 		try {
 			setLoading(true);
-			const recordsData = (await axios.get('/records')).data;
-			const claimsData = (await axios.get('/claims')).data;
+			const recordsData = (await axios.get(`${import.meta.env.VITE_BACKEND_URL}/records`)).data;
+			const claimsData = (await axios.get(`${import.meta.env.VITE_BACKEND_URL}/claims`)).data;
 			setRecords(recordsData);
 			setClaims(claimsData);
 		} catch (err) {
@@ -73,7 +73,7 @@ export default function AdminPage() {
 	async function updateRecordStatus(recordId, status) {
 		try {
 			try {
-				axios.patch(`/records/${recordId}/${status}`, null, {
+				axios.patch(`${import.meta.env.VITE_BACKEND_URL}/records/${recordId}/${status}`, null, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 			} catch (err) {
@@ -97,7 +97,7 @@ export default function AdminPage() {
 		try {
 			if (approve) {
 				await axios.patch(
-					`/users/${userId}/claim`,
+					`${import.meta.env.VITE_BACKEND_URL}/users/${userId}/claim`,
 					{
 						playerId: playerId,
 					},
@@ -107,7 +107,7 @@ export default function AdminPage() {
 				);
 			}
 			setClaims(claims.filter((claim) => claim.userId !== userId));
-			await axios.delete(`/claims/${claimId}`, null, {
+			await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/claims/${claimId}`, null, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 		} catch (err) {

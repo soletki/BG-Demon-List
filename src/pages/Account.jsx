@@ -22,21 +22,21 @@ export default function Account() {
 					const uid = await user.uid;
 					setUserId(uid);
 					setIsAdmin(
-						(await axios.get(`/users/${uid}/admin`)).data.isAdmin
+						(await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/${uid}/admin`)).data.isAdmin
 					);
-					const userResponse = await axios.get(`/users/${uid}`);
+					const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/${uid}`);
 					setUser(userResponse.data);
 
 					if (userResponse.data.playerId) {
 						const recordsResponse = await axios.get(
-							`/records/${userResponse.data.playerId}`
+							`${import.meta.env.VITE_BACKEND_URL}/records/${userResponse.data.playerId}`
 						);
 						setRecords(recordsResponse.data);
 					}
 
 					if (!userResponse.data.playerId) {
 						setClaimlessPlayers(
-							(await axios.get('/players/claimless')).data
+							(await axios.get(`${import.meta.env.VITE_BACKEND_URL}/players/claimless`)).data
 						);
 					}
 				} catch (error) {
@@ -54,7 +54,7 @@ export default function Account() {
 	}, []);
 
 	const handleCreatePlayer = () => {
-		axios.post('/players', {
+		axios.post(`${import.meta.env.VITE_BACKEND_URL}/players`, {
 			username: user.username,
 		});
 		window.location.reload();
@@ -65,7 +65,7 @@ export default function Account() {
 		console.log(selectedPlayer);
 		console.log(UserId);
 		try {
-			await axios.post('/claims', {
+			await axios.post(`${import.meta.env.VITE_BACKEND_URL}/claims`, {
 				userId: UserId,
 				playerId: selectedPlayer,
 			});

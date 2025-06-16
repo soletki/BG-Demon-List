@@ -78,12 +78,12 @@ export default function DemonList() {
 				requirement: parseInt(addForm.requirement),
 			};
 			console.log(userToken);
-			await axios.post('/levels', levelData, {
+			await axios.post(`${import.meta.env.VITE_BACKEND_URL}/levels`, levelData, {
 				headers: { Authorization: `Bearer ${userToken}` },
 			});
 
 			setLoading(true);
-			const response = await axios.get('/levels');
+			const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/levels`);
 			const sorted = response.data.sort(
 				(a, b) => a.position - b.position
 			);
@@ -114,14 +114,14 @@ export default function DemonList() {
 		try {
 			console.log(userToken);
 			await axios.delete(
-				`/levels/${encodeURIComponent(selectedLevelToRemove)}`,
+				`${import.meta.env.VITE_BACKEND_URL}/levels/${encodeURIComponent(selectedLevelToRemove)}`,
 				{
 					headers: { Authorization: `Bearer ${userToken}` },
 				}
 			);
 
 			setLoading(true);
-			const response = await axios.get('/levels');
+			const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/levels`);
 			const sorted = response.data.sort(
 				(a, b) => a.position - b.position
 			);

@@ -94,7 +94,7 @@ export default function Auth() {
 					formData.password
 				);
 
-				axios.post("/users", {
+				axios.post(`${import.meta.env.VITE_BACKEND_URL}/users`, {
 					username: formData.username,
 					uid: userCredential.user.uid
 				})

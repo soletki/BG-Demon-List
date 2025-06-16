@@ -26,7 +26,7 @@ export default function RecordSubmission() {
 				const uid = await user.uid;
 				setIsLoggedIn(true);
 
-				await setPlayerId((await axios.get(`/users/${uid}/claim`)).data.playerId)
+				await setPlayerId((await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/${uid}/claim`)).data.playerId)
 				await fetchLevels();
 			}
 		});
@@ -36,7 +36,7 @@ export default function RecordSubmission() {
 
 	const fetchLevels = async () => {
 		try {
-			const response = await axios.get('/levels');
+			const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/levels`);
 			setLevels(response.data);
 			console.log(levels)
 		} catch (err) {
@@ -114,7 +114,7 @@ export default function RecordSubmission() {
 		setSuccess('');
 
 		try {
-			await axios.post('/records', {
+			await axios.post(`${import.meta.env.VITE_BACKEND_URL}/records`, {
 				playerId: playerId,
 				levelId: selectedLevel.levelId,
 				progress: parseInt(formData.progress),

@@ -12,7 +12,7 @@ export default function Leaderboard() {
 		const fetchPlayers = async () => {
 			try {
 				setLoading(true);
-				const response = await axios.get('/players');
+				const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/players`);
 				const data = await response.data;
 				setPlayers(data);
 				if (data.length > 0) {
