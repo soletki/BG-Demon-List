@@ -3,7 +3,7 @@ import axios from 'axios';
 import './Account.css';
 import './global.css';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from '../api/firebase-user';
+import { auth } from '../firebase-user';
 
 export default function Account() {
 	const [user, setUser] = useState(null);

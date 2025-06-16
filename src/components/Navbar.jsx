@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { auth } from '../api/firebase-user';
+import { auth } from '../firebase-user';
 import { onAuthStateChanged } from 'firebase/auth';
 import './Navbar.css';
 import axios from 'axios';

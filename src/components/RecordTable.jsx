@@ -1,4 +1,3 @@
-import React from 'react';
 import './RecordTable.css';
 
 export default function RecordTable({ records }){

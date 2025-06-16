@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './Admin.css';
 import axios from 'axios';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../api/firebase-user';
+import { auth } from '../firebase-user';
 
 export default function AdminPage() {
 	const [activeTab, setActiveTab] = useState('records');

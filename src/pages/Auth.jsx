@@ -8,7 +8,7 @@ import {
 	GoogleAuthProvider
 } from 'firebase/auth';
 import axios from 'axios';
-import { auth } from '../api/firebase-user';
+import { auth } from '../firebase-user';
 
 export default function Auth() {
 	const [isLogin, setIsLogin] = useState(true);

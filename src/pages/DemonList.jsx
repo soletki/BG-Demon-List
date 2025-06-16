@@ -3,7 +3,7 @@ import axios from 'axios';
 import './DemonList.css';
 import './global.css';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../api/firebase-user';
+import { auth } from '../firebase-user';
 
 export default function DemonList() {
 	const [levels, setLevels] = useState([]);
