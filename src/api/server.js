@@ -1,15 +1,22 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv'
 import levelsRouter from './routes/levels.js';
 import playersRouter from './routes/players.js'
 import usersRouter from './routes/users.js'
 import recordsRouter from './routes/records.js'
 import claimsRouter from './routes/claims.js'
 
+dotenv.config();
+
 const app = express();
 const port = 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: [process.env.VITE_BACKEND_URL, 'http://localhost:5173'],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Routes
