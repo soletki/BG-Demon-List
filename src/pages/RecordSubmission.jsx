@@ -21,6 +21,7 @@ export default function RecordSubmission() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		document.title = "Submit a record"
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
 				const uid = await user.uid;

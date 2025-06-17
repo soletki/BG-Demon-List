@@ -9,6 +9,7 @@ export default function Leaderboard() {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
+		document.title = "Leaderboard"
 		const fetchPlayers = async () => {
 			try {
 				setLoading(true);

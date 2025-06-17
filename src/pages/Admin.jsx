@@ -27,6 +27,7 @@ export default function AdminPage() {
 	}, []);
 
 	useEffect(() => {
+		document.title = "Admin"
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
 				const token = await user.getIdToken();

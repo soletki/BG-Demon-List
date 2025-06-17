@@ -26,6 +26,7 @@ export default function Account() {
 					);
 					const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/${uid}`);
 					setUser(userResponse.data);
+					document.title = userResponse.data.username
 
 					if (userResponse.data.playerId) {
 						const recordsResponse = await axios.get(

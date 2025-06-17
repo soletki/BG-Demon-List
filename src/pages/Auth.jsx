@@ -22,6 +22,7 @@ export default function Auth() {
 	const [error, setError] = useState('');
 
 	useEffect(() => {
+		document.title = "Authentication"
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
 				console.log('Logged in user:', {
