@@ -155,14 +155,17 @@ router.get('/:playerId', async (req, res) => {
             }
 
             let levelName = null;
+            let position = 0;
             if (data.levelId) {
                 const levelDoc = await db.collection('levels').doc(data.levelId).get();
                 levelName = levelDoc.exists ? levelDoc.data().name : null;
+                position = levelDoc.exists ? levelDoc.data().position : 0;
             }
 
             return {
                 id: doc.id,
                 ...data,
+                position: position,
                 playerName: playerName,
                 levelName: levelName,
             };

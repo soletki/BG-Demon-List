@@ -1,6 +1,7 @@
 import express from 'express';
 import { db } from '../firebase.js';
 import verifyAdmin from '../middleware/verifyAdmin.js';
+import axios from 'axios';
 const router = express.Router();
 
 function calculatePoints(pos, n, l, p) {
@@ -77,50 +78,52 @@ function calculatePoints(pos, n, l, p) {
 router.get('/', async (req, res) => {
 	try {
 		const playersSnap = await db.collection('players').get();
-		const recordsSnap = await db
-			.collection('records')
-			.where('status', '==', 'accepted')
-			.get();
-		const levelsSnap = await db.collection('levels').get();
 
-		const players = {};
-		const levels = {};
+		const playerDocs = playersSnap.docs;
+		const players = [];
 
-		levelsSnap.forEach((doc) => {
-			levels[doc.id] = doc.data();
-		});
+		for (const doc of playerDocs) {
+			const playerId = doc.id;
+			const name = doc.data().name;
 
-		playersSnap.forEach((doc) => {
-			players[doc.id] = {
-				id: doc.id,
-				name: doc.data().name,
-				points: 0,
-				records: [],
-			};
-		});
+			let records = [];
+			try {
+				const response = await axios.get(`http://localhost:3000/records/${playerId}`);
+				records = response.data;
+			} catch (err) {
+				console.error(`Error fetching records for player ${playerId}`, err.message);
+			}
 
-		recordsSnap.forEach((doc) => {
-			const record = doc.data();
-			const player = players[record.playerId];
-			const level = levels[record.levelId];
+			let points = 0;
+			const filteredRecords = [];
 
-			if (player && level) {
-				player.records.push({
-					level: level.name,
-					position: level.position,
+			for (const record of records) {
+				if (record.status !== 'accepted') continue;
+
+				points += calculatePoints(
+					record.position,
+					150,
+					100, // assuming requirement is 100 if not present
+					record.progress
+				);
+
+				filteredRecords.push({
+					level: record.levelName,
+					position: record.position,
 					progress: record.progress,
 					video: record.video,
 				});
-				player.points += calculatePoints(
-					level.position,
-					150,
-					level.requirement,
-					record.progress
-				);
 			}
-		});
 
-		const result = Object.values(players)
+			players.push({
+				id: playerId,
+				name,
+				points,
+				records: filteredRecords,
+			});
+		}
+
+		const result = players
 			.sort((a, b) => b.points - a.points)
 			.map((player, index) => ({
 				...player,
@@ -133,6 +136,32 @@ router.get('/', async (req, res) => {
 		res.status(500).json({ error: 'Failed to fetch players' });
 	}
 });
+
+
+router.get('/explain', async (req, res) => {
+	try {
+		const options = { analyze: true };
+
+		const q1 = await db.collection('players');
+		const playersExplain = await q1.explain(options);
+		const q2 = await db
+			.collection('records')
+			.where('status', '==', 'accepted')
+		const recordsExplain = await q2.explain(options);
+		const q3 = await db.collection('levels');
+		const levelsExplain = await q3.explain(options)
+
+		res.json({
+			playersQuery: playersExplain,
+			recordsQuery: recordsExplain,
+			levelsQuery: levelsExplain,
+		});
+	} catch (error) {
+		console.error('Explain error:', error);
+		res.status(500).json({ message: error.message });
+	}
+});
+
 
 /**
  * @swagger

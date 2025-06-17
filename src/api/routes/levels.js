@@ -51,6 +51,20 @@ router.get('/', async (req, res) => {
 	}
 });
 
+router.get('/explain', async (req, res) => {
+	try {
+		const query = db.collection('levels').orderBy('position');
+
+		const explain = await query.explain({ analyze: true });
+
+		res.status(200).json(explain);
+	} catch (error) {
+		console.error('Explain error:', error);
+		res.status(500).json({ message: error.message });
+	}
+});
+
+
 /**
  * @swagger
  * /levels/{position}:
