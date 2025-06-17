@@ -1,8 +1,30 @@
-# React + Vite
+# Bulgarian Demonlist
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack web application for managing players, their records, and levels in a demonlist-style ranking system. Built with React (frontend), Node.js/Express (backend), and Firebase (Firestore + Auth via ID tokens).
 
-Currently, two official plugins are available:
+## 📚 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🔒 Authentication
+- Email/password and social login support (Google)
+- Firebase Auth with token-based backend verification
+- Custom user-player linking logic
+
+### 🧍 Player Management
+- Create player profile with username
+- Link authenticated user to player via Firestore
+- Fetch and rank players by points
+
+### 🎮 Record & Level System
+- Manage level list and positions
+- Store and update user-submitted records
+- Automatic ranking based on record data
+
+## 🚀 Tech Stack
+
+| Layer       | Tech                          |
+|-------------|-------------------------------|
+| Frontend    | React, React Router, CSS      |
+| Backend     | Node.js, Express              |
+| Database    | Firebase Firestore            |
+| Auth        | Firebase Authentication       |
+| Hosting     | Vercel, Render                |
