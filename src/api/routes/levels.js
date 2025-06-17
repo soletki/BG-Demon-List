@@ -15,8 +15,20 @@ const router = express.Router();
  * @swagger
  * /levels:
  *   get:
- *     summary: Get all levels
+ *     summary: Get all levels with optional pagination
  *     tags: [Levels]
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         description: Maximum number of levels to return
+ *       - in: query
+ *         name: after
+ *         schema:
+ *           type: integer
+ *         description: Start listing after this position value (used for pagination)
  *     responses:
  *       200:
  *         description: List of levels
@@ -26,17 +38,49 @@ const router = express.Router();
  *               type: array
  *               items:
  *                 type: object
+ *                 properties:
+ *                   levelId:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   creators:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                   video:
+ *                     type: string
+ *                   requirement:
+ *                     type: integer
+ *                   position:
+ *                     type: integer
  *       400:
- *         description: No levels found
+ *         description: Invalid parameters or no levels found
  *       500:
  *         description: Internal server error
  */
 router.get('/', async (req, res) => {
 	try {
-		const snapshot = await db
-			.collection('levels')
-			.orderBy('position')
-			.get();
+		const { limit, after } = req.query;
+
+		let query = db.collection('levels').orderBy('position');
+
+		if (after !== undefined) {
+			const afterPosition = parseInt(after, 10);
+			if (isNaN(afterPosition)) {
+				return res.status(400).json({ message: 'Invalid "after" parameter (must be a number)' });
+			}
+			query = query.startAfter(afterPosition);
+		}
+
+		if (limit !== undefined) {
+			const parsedLimit = parseInt(limit, 10);
+			if (isNaN(parsedLimit) || parsedLimit <= 0) {
+				return res.status(400).json({ message: 'Invalid "limit" parameter' });
+			}
+			query = query.limit(parsedLimit);
+		}
+
+		const snapshot = await query.get();
 
 		if (snapshot.empty) return res.sendStatus(400);
 

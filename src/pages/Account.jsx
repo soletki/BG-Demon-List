@@ -54,8 +54,8 @@ export default function Account() {
 		return () => unsubscribe();
 	}, []);
 
-	const handleCreatePlayer = () => {
-		axios.post(`${import.meta.env.VITE_BACKEND_URL}/players`, {
+	const handleCreatePlayer = async() => {
+		await axios.post(`${import.meta.env.VITE_BACKEND_URL}/players`, {
 			username: user.username,
 		});
 		window.location.reload();
