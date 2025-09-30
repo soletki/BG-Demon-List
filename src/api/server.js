@@ -27,6 +27,10 @@ app.use('/users', usersRouter);
 app.use('/records', recordsRouter);
 app.use('/claims', claimsRouter);
 
+app.get('/healthz', async (req, res)=>{
+  return res.status(200);
+})
+
 app.listen(port, () => {
 	console.log(`Server has started on http://localhost:${port}`);
   console.log(`API docs at http://localhost:${port}/api-docs`);
